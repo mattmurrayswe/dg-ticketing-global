@@ -1,0 +1,71 @@
+version: '3.8'
+
+services:
+  api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: dg_ticketing_api
+    restart: unless-stopped
+    ports:
+      - "8005:8000"
+    environment:
+      - DATABASE_URL=postgresql+psycopg2://dgticketing:dgticketing123@db:5432/dgticketing
+      - REDIS_URL=redis://redis:6379/0
+      - FRONTEND_URL=http://localhost:5175
+      - PYTHONUNBUFFERED=1
+    volumes:
+      - ./backend:/app
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: dg_ticketing_frontend
+    restart: unless-stopped
+    ports:
+      - "5175:5173"
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+      - VITE_API_URL=http://localhost:8005/api
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    depends_on:
+      - api
+
+  db:
+    image: postgres:16-alpine
+    container_name: dg_ticketing_db
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=dgticketing
+      - POSTGRES_PASSWORD=dgticketing123
+      - POSTGRES_DB=dgticketing
+    ports:
+      - "5435:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dgticketing -d dgticketing"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: dg_ticketing_redis
+    restart: unless-stopped
+    ports:
+      - "6381:6379"
+    volumes:
+      - redis_data:/data
+
+volumes:
+  pg_data:
+  redis_data:

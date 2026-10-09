@@ -1,0 +1,19 @@
+{
+  "typescript.tsdk": "frontend/node_modules/typescript/lib",
+  "typescript.suggest.paths": true,
+  "eslint.workingDirectories": [
+    "./frontend"
+  ],
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+  "files.exclude": {
+    "**/node_modules": false,
+    "**/.git": true,
+    "**/.DS_Store": true
+  },
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/dist": true
+  }
+}
