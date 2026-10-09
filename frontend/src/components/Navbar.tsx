@@ -22,7 +22,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentLang, onLanguageChange })
           <img
             src="/dg-com-br.png"
             alt="Digital Garage"
-            className="h-9 md:h-11 w-auto object-contain transition-transform group-hover:scale-105"
+            className="h-9 md:h-11 w-auto object-contain"
           />
         </Link>
 

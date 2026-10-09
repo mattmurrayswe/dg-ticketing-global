@@ -9,36 +9,39 @@ interface LanguageSelectorProps {
 
 export const LanguageSelector: React.FC<LanguageSelectorProps> = ({ currentLang, onLanguageChange }) => {
   return (
-    <div className="flex items-center gap-1 bg-[#12141a] p-1 rounded-lg border border-[#1e222e]">
-      <Globe className="w-3.5 h-3.5 text-zinc-400 ml-1" />
+    <div className="w-28 flex items-center bg-[#12141a] p-1 rounded-lg border border-[#1e222e]">
+      <Globe className="w-6 h-3.5 text-zinc-400 ml-1" />
       <button
         type="button"
         onClick={() => onLanguageChange('pt')}
-        className={`px-2 py-0.5 rounded text-[11px] font-bold transition-all flex items-center gap-1 ${
-          currentLang === 'pt' ? 'bg-dg-cyan text-black font-extrabold shadow-sm' : 'text-zinc-400 hover:text-white'
+        className={`px-[0.280rem] py-0.5 rounded text-[11px] font-bold transition-all flex items-center gap-1 ${
+          currentLang === 'pt' ? 'text-white font-extrabold shadow-sm' : 'text-zinc-400 hover:text-white'
         }`}
       >
-        <span>🇧🇷</span> PT
+        {/* <span>🇧🇷</span> */}
+        PT
       </button>
 
       <button
         type="button"
         onClick={() => onLanguageChange('en')}
-        className={`px-2 py-0.5 rounded text-[11px] font-bold transition-all flex items-center gap-1 ${
-          currentLang === 'en' ? 'bg-dg-cyan text-black font-extrabold shadow-sm' : 'text-zinc-400 hover:text-white'
+        className={`px-[0.280rem] py-0.5 rounded text-[11px] font-bold transition-all flex items-center gap-1 ${
+          currentLang === 'en' ? 'text-white font-extrabold shadow-sm' : 'text-zinc-400 hover:text-white'
         }`}
       >
-        <span>🇺🇸</span> EN
+        {/* <span>🇺🇸</span> */}
+        EN
       </button>
 
       <button
         type="button"
         onClick={() => onLanguageChange('it')}
-        className={`px-2 py-0.5 rounded text-[11px] font-bold transition-all flex items-center gap-1 ${
-          currentLang === 'it' ? 'bg-dg-cyan text-black font-extrabold shadow-sm' : 'text-zinc-400 hover:text-white'
+        className={`px-[0.280rem] py-0.5 rounded text-[11px] font-bold transition-all flex items-center gap-1 ${
+          currentLang === 'it' ? 'text-white font-extrabold shadow-sm' : 'text-zinc-400 hover:text-white'
         }`}
       >
-        <span>🇮🇹</span> IT
+        {/* <span>🇮🇹</span> */}
+        IT
       </button>
     </div>
   );
