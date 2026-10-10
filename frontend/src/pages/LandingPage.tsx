@@ -51,14 +51,41 @@ export const LandingPage: React.FC<LandingPageProps> = ({ currentLang, onLanguag
       <Navbar currentLang={currentLang} onLanguageChange={onLanguageChange} />
 
       {/* Hero Section */}
-      <section className="relative pt-12 pb-20 px-4 text-center overflow-hidden border-b border-[#1e222e] bg-gradient-to-b from-[#0d0e14] to-[#08090b]">
+      <section className="relative pt-28 pb-24   px-4 text-center overflow-hidden border-b border-[#1e222e] bg-gradient-to-b from-[#0d0e14] to-[#08090b]">
         {/* Neon Ambient Lighting */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-96 bg-dg-cyan/10 rounded-full blur-3xl pointer-events-none" />
+        {/* <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-96 bg-dg-cyan/5 rounded-full blur-3xl pointer-events-none" /> */}
 
-        <div className="max-w-5xl mx-auto relative z-10">
+          <p className='font-markazi text-3xl text-zinc-400'>De GearHead para GearHead</p>
+          <h1 className="text-4xl lg:text-5xl font-medium font-markazi text-white tracking-wide mb-2 max-w-4xl mx-auto leading-tight">
+            O Emissor de Ingressos dos Eventos Automotivos.
+          </h1>
+          <p className='font-markazi text-xl max-w-2xl mx-auto text-zinc-400'>
+            Repasses antecipados de pagamentos, encontre o publico que está procurando pelo seu evento, maior alcance para seu evento automotivo.
+          </p>
+
+          <div className="flex flex-wrap items-center justify-center mt-8 pl-[450px]">
+            {/* Pagar.me Logo Card */}
+            <div className="opacity-100 px-4 py-3.5 rounded-xl flex items-center justify-center">
+              <img
+                src="/pagarme-logo.svg"
+                alt="Pagar.me V5 PIX"
+                className="h-10 object-contain"
+              />
+            </div>
+
+            {/* Stripe Logo Card */}
+            <div className="opacity-100 px-4 py-3.5 rounded-xl flex items-center justify-center">
+              <img
+                src="/stripe-logo.png"
+                alt="Stripe Payments"
+                className="h-10 object-contain"
+              />
+            </div>
+          </div>
+
+        {/* <div className="max-w-5xl mx-auto relative z-10"> */}
           
-          {/* Square Rounded Logo Showcase */}
-          <div className="relative inline-block mb-6 group cursor-pointer" onClick={() => navigate('/checkout')}>
+          {/* <div className="relative inline-block mb-6 group cursor-pointer" onClick={() => navigate('/checkout')}>
             <img
               src="/dg-logo-rounded-black.png"
               alt="Digital Garage Car Meet Platform"
@@ -82,7 +109,6 @@ export const LandingPage: React.FC<LandingPageProps> = ({ currentLang, onLanguag
             Processamos mais de <strong className="text-emerald-400 font-mono">R$ 84.500</strong> em 7 encontros com leitor de portão QR Code em tempo real, pagamento instantâneo via PIX (Pagar.me), Cartão (Stripe) e <strong className="text-dg-cyan">Repasse Antecipado</strong> para organizadores.
           </p>
 
-          {/* Action CTAs */}
           <div className="flex flex-wrap items-center justify-center gap-4">
             <button
               onClick={() => navigate('/checkout')}
@@ -101,12 +127,38 @@ export const LandingPage: React.FC<LandingPageProps> = ({ currentLang, onLanguag
             </button>
           </div>
 
-        </div>
+        </div> */}
       </section>
 
       {/* Repasse Antecipado Section */}
-      <section className="pb-16 pt-8 px-4 bg-[#0f1117] border-b border-[#1e222e]">
-        <div className="max-w-5xl mx-auto">
+      <section className="pb-16 pt-8 px-32 space-y-8 bg-[#0f1117] border-b border-[#1e222e]">
+        <div className='flex flex-col'>
+          <h2 className='text-2xl'>
+            Repasses Antecipados
+          </h2>
+          <p className='max-w-[600px] text-zinc-400'>
+            Diversas Plataformas seguram sua arrecadação até após o dia do evento. Nosso Emissor conta com repasses antecipados. Assim você tem maior fluxo de caixa para investir em atrações, publicidade, divulgação e aumentar o valor dos seus ingressos e lotes.
+          </p>
+        </div>
+        <div className='flex flex-col w-full text-end'>
+          <h2 className='text-2xl'>
+            Público GearHead
+          </h2>
+          <div className='w-full flex justify-end'>
+            <p className='max-w-[650px] text-zinc-400'>
+              A digitalgarage.com.br é uma plataforma focada no mercado automotivo, temos classificados, aplicativo FIPE, ferramentas para intermediadores e lojistas automotivos, importação veicular. Ao emitir conosco você acessa um público altamente segmentado e interessado em Car Meets, expandido seu evento.
+            </p>
+          </div>
+        </div>
+        <div className='flex flex-col'>
+          <h2 className='text-2xl'>
+            Maior Alcance
+          </h2>
+          <p className='max-w-[650px] text-zinc-400'>
+            Você receberá divulgação em nossos canais digitais. Nossos sites, plataformas, aplicativos, grupos de whatsapp, redes sociais apoiarão na divulgação do seu evento, aumentando seu alcance.
+          </p>
+        </div>
+        {/* <div className="max-w-5xl mx-auto">
           
           <div className="text-center mb-12">
             <h2 className="text-2xl lg:text-4xl font-figtree font-bold text-white tracking-tight mt-3 mb-2">
@@ -151,10 +203,13 @@ export const LandingPage: React.FC<LandingPageProps> = ({ currentLang, onLanguag
 
           </div>
 
-        </div>
+        </div> */}
       </section>
 
       {/* Powered by Digital Garage Gallery */}
+      <section className="py-16 px-4 border-b border-[#1e222e]">
+          <img src="/dg-photo-scanning.png" alt="" />
+      </section>
       <section className="py-16 px-4 border-b border-[#1e222e]">
         <div className="max-w-5xl mx-auto">
           
