@@ -14,7 +14,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentLang, onLanguageChange })
   const location = useLocation();
 
   return (
-    <header className="sticky top-0 z-50 bg-[#08090b]/95 backdrop-blur-md border-b border-[#1e222e] px-4 lg:px-8 py-4">
+    <header className="sticky top-0 z-50 bg-[#08090b]/95 backdrop-blur-md border-b border-[#1e222e] px-4 lg:px-8 lg:pl-14 py-4">
       <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
         
         {/* High-Resolution Ultra-HD Brand Logo (1915x1105) */}
