@@ -51,7 +51,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ currentLang, onLanguag
       <Navbar currentLang={currentLang} onLanguageChange={onLanguageChange} />
 
       {/* Hero Section */}
-      <section className="relative pt-28 pb-24 px-4 text-center overflow-hidden border-b border-[#1e222e] bg-gradient-to-b from-[#0d0e14] to-[#08090b]">
+      <section className="relative pt-[9.8rem] pb-[9.1rem] px-4 text-center overflow-hidden border-b border-[#1e222e] bg-gradient-to-b from-[#0d0e14] to-[#08090b]">
         {/* Neon Ambient Lighting */}
         {/* <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-96 bg-dg-cyan/5 rounded-full blur-3xl pointer-events-none" /> */}
 
@@ -97,8 +97,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({ currentLang, onLanguag
           </div>
       </section>
 
-      {/* Repasse Antecipado Section */}
-      <section className="pb-20 pt-14 px-32 space-y-8 bg-[#0f1117] border-b border-[#1e222e]">
+      {/* Vantagens Section */}
+      <section className="pb-12 pt-14 px-32 space-y-16 bg-[#0f1117] border-b border-[#1e222e]">
         <div className='flex flex-col'>
           <h2 className='text-2xl'>
             Repasses Antecipados
@@ -108,12 +108,12 @@ export const LandingPage: React.FC<LandingPageProps> = ({ currentLang, onLanguag
           </p>
         </div>
         <div className='flex flex-col w-full text-end'>
-          <h2 className='text-2xl'>
+          <h2 className='text-2xl -mb-3'>
             Público GearHead
           </h2>
           <div className='w-full flex justify-end'>
             <p className='max-w-[650px] text-zinc-400'>
-              A <img src="/dg-com-br.png" alt="digitalgarage.com.br" className="inline-block h-10" /> é uma plataforma focada no mercado automotivo, temos classificados, aplicativo FIPE, ferramentas para intermediadores e lojistas automotivos, importação veicular. Ao emitir conosco você acessa um público altamente segmentado e interessado em Car Meets, expandido seu evento.
+              A <img src="/dg-com-br.png" alt="digitalgarage.com.br" className="inline-block h-10 align-bottom pr-2 pl-1" /> é uma plataforma focada no mercado automotivo, temos classificados, aplicativo FIPE, ferramentas para intermediadores e lojistas automotivos, importação veicular. Ao emitir conosco você acessa um público altamente segmentado e interessado em Car Meets, expandido seu evento.
             </p>
           </div>
         </div>
@@ -125,24 +125,36 @@ export const LandingPage: React.FC<LandingPageProps> = ({ currentLang, onLanguag
             Você receberá divulgação em nossos canais digitais. Nossos sites, plataformas, aplicativos, grupos de whatsapp, redes sociais apoiarão na divulgação do seu evento, aumentando seu alcance.
           </p>
         </div>
+        <div className='text-center pt-6'>
+          <Link className='underline underline-offset-4 decoration-zinc-700 border-2 border-[#1e222e] rounded-md px-6 py-2 font-markazi text-xl bg-gradient-to-tr from-black to-[#0f1117]' to="/organizer">
+              Criar Novo Evento
+          </Link>
+        </div>
       </section>
 
       {/* Powered by Digital Garage Gallery */}
       <section className="border-b bg-[#0f1117] border-[#1e222e] flex justify-end">
-          <img className="w-2/5" src="/dg-photo-scanning.png" alt="" />
+          <img className="w-[41%]" src="/dg-photo-scanning.png" alt="" />
       </section>
 
       {/* Footer */}
       <footer className="mt-auto bg-[#050608] border-t border-[#1e222e] py-8 px-4 text-center text-xs text-zinc-500 font-mono">
-        <div className="max-w-5xl mx-auto flex flex-wrap items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
-            <img src="/dg-com-br.png" alt="Digital Garage" className="h-6 w-auto object-contain" />
-            <span>Digital Garage Ticketing System &copy; 2026</span>
+        <div className="max-w-5xl mx-56 flex flex-wrap items-center justify-between gap-4">
+          <div className="flex items-center gap-4 pt-8  ">
+            <img src="/dg-com-br.png" alt="Digital Garage" className="h-12 w-auto object-contain" />
+            <span className='text-zinc-400 text-5xl font-[100] pb-1'>|</span>
+            <h3 className='font-markazi text-white text-[1.6rem] pt-5'>A Plataforma do GearHead</h3>
           </div>
-          <div className="flex items-center gap-4">
-            <span className="text-emerald-400 flex items-center gap-1">
-              <ShieldCheck className="w-3.5 h-3.5" /> Pagar.me & Stripe Verified
-            </span>
+          <div className="font-sans px-24 pt-4">
+            <h3 className='mb-2 text-start text-white text-xl'>+ Produtos</h3>
+            <div className='pl-7 flex flex-col text-start text-base font-bold underline underline-offset-1'>
+              <Link to="/privacy" className="w-full text-zinc-400 hover:text-white">Index</Link>
+              <Link to="/terms" className="w-full text-zinc-400 hover:text-white">Classificados</Link>
+              <Link to="/terms" className="w-full text-zinc-400 hover:text-white">Wanted</Link>
+              <Link to="/terms" className="w-full text-zinc-400 hover:text-white">Intermediação</Link>
+              <Link to="/terms" className="w-full text-zinc-400 hover:text-white">Landing Pages Autos</Link>
+              <Link to="/terms" className="w-full text-zinc-400 hover:text-white">Classificados</Link>
+            </div>
           </div>
         </div>
       </footer>
