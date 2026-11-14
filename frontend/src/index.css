@@ -41,3 +41,16 @@ h2, h3, h4, h5, h6, .font-heading, .font-righteous {
 ::-webkit-scrollbar-thumb:hover {
   background: #00f0ff;
 }
+
+@keyframes globe-spin {
+  from {
+    background-position-x: 0px;
+  }
+  to {
+    background-position-x: -208px;
+  }
+}
+
+.animate-globe-spin {
+  animation: globe-spin 19s linear infinite;
+}

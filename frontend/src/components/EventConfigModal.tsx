@@ -13,7 +13,8 @@ export const EventConfigModal: React.FC<EventConfigModalProps> = ({ currentLang,
   const t = translations[currentLang];
   const [title, setTitle] = useState('');
   const [subtitle, setSubtitle] = useState('');
-  const [date, setDate] = useState('');
+  const [eventDate, setEventDate] = useState('');
+  const [eventTime, setEventTime] = useState('14:00');
   const [location, setLocation] = useState('');
   const [city, setCity] = useState('');
   const [bannerUrl, setBannerUrl] = useState('');
@@ -23,7 +24,7 @@ export const EventConfigModal: React.FC<EventConfigModalProps> = ({ currentLang,
   const [tiers, setTiers] = useState<any[]>([
     {
       name: 'Ingresso Expositor Paddock VIP',
-      badge: 'legendary',
+      badge: 'uncommon',
       price_brl: 140.0,
       price_usd: 28.0,
       price_eur: 26.0,
@@ -53,7 +54,7 @@ export const EventConfigModal: React.FC<EventConfigModalProps> = ({ currentLang,
       ...tiers,
       {
         name: 'Novo Lote de Ingresso',
-        badge: 'rare',
+        badge: 'uncommon',
         price_brl: 80.0,
         price_usd: 16.0,
         price_eur: 15.0,
@@ -76,17 +77,18 @@ export const EventConfigModal: React.FC<EventConfigModalProps> = ({ currentLang,
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!title || !date || !location || !city || tiers.length === 0) return;
+    if (!title || !eventDate || !eventTime || !location || !city || tiers.length === 0) return;
 
     setLoading(true);
     setSuccessMsg(null);
     setCreatedSlug(null);
 
     try {
+      const formattedDate = `${eventDate} ${eventTime} BRT`;
       const res = await createNewEvent({
         title,
         subtitle: subtitle || undefined,
-        date,
+        date: formattedDate,
         location,
         city,
         banner_url: bannerUrl || undefined,
@@ -201,26 +203,36 @@ export const EventConfigModal: React.FC<EventConfigModalProps> = ({ currentLang,
                   />
                 </div>
 
+                <div>
+                  <label className="text-xs font-bold text-zinc-300 block mb-1">Subtítulo / Edição</label>
+                  <input
+                    type="text"
+                    value={subtitle}
+                    onChange={(e) => setSubtitle(e.target.value)}
+                    placeholder="ex: 1st Annual Edition"
+                    className="w-full bg-[#08090b] border border-[#1e222e] rounded-xl px-3.5 py-2 text-xs text-white"
+                  />
+                </div>
+
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="text-xs font-bold text-zinc-300 block mb-1">Subtítulo / Edição</label>
+                    <label className="text-xs font-bold text-zinc-300 block mb-1">Data do Evento *</label>
                     <input
-                      type="text"
-                      value={subtitle}
-                      onChange={(e) => setSubtitle(e.target.value)}
-                      placeholder="ex: 1st Annual Edition"
-                      className="w-full bg-[#08090b] border border-[#1e222e] rounded-xl px-3 py-2 text-xs text-white"
+                      type="date"
+                      required
+                      value={eventDate}
+                      onChange={(e) => setEventDate(e.target.value)}
+                      className="w-full bg-[#08090b] border border-[#1e222e] rounded-xl px-3 py-2 text-xs text-white [color-scheme:dark]"
                     />
                   </div>
                   <div>
-                    <label className="text-xs font-bold text-zinc-300 block mb-1">Data & Horário *</label>
+                    <label className="text-xs font-bold text-zinc-300 block mb-1">Horário *</label>
                     <input
-                      type="text"
+                      type="time"
                       required
-                      value={date}
-                      onChange={(e) => setDate(e.target.value)}
-                      placeholder="2026-12-05 14:00 BRT"
-                      className="w-full bg-[#08090b] border border-[#1e222e] rounded-xl px-3 py-2 text-xs text-white"
+                      value={eventTime}
+                      onChange={(e) => setEventTime(e.target.value)}
+                      className="w-full bg-[#08090b] border border-[#1e222e] rounded-xl px-3 py-2 text-xs text-white [color-scheme:dark]"
                     />
                   </div>
                 </div>
@@ -306,31 +318,15 @@ export const EventConfigModal: React.FC<EventConfigModalProps> = ({ currentLang,
                         )}
                       </div>
 
-                      <div className="grid grid-cols-2 gap-3">
-                        <div>
-                          <label className="text-[11px] text-zinc-400 block mb-1">Nome da Categoria</label>
-                          <input
-                            type="text"
-                            required
-                            value={tier.name}
-                            onChange={(e) => handleTierChange(idx, 'name', e.target.value)}
-                            className="w-full bg-[#08090b] border border-[#1e222e] rounded-lg px-2.5 py-1.5 text-xs text-white"
-                          />
-                        </div>
-
-                        <div>
-                          <label className="text-[11px] text-zinc-400 block mb-1">Badge de Raridade</label>
-                          <select
-                            value={tier.badge}
-                            onChange={(e) => handleTierChange(idx, 'badge', e.target.value)}
-                            className="w-full bg-[#08090b] border border-[#1e222e] rounded-lg px-2.5 py-1.5 text-xs text-white"
-                          >
-                            <option value="uncommon">Uncommon (Comum)</option>
-                            <option value="rare">Rare (Raro)</option>
-                            <option value="epic">Epic (Épico)</option>
-                            <option value="legendary">Legendary (Lendário)</option>
-                          </select>
-                        </div>
+                      <div>
+                        <label className="text-[11px] text-zinc-400 block mb-1">Nome da Categoria</label>
+                        <input
+                          type="text"
+                          required
+                          value={tier.name}
+                          onChange={(e) => handleTierChange(idx, 'name', e.target.value)}
+                          className="w-full bg-[#08090b] border border-[#1e222e] rounded-lg px-2.5 py-1.5 text-xs text-white"
+                        />
                       </div>
 
                       <div className="grid grid-cols-4 gap-2">

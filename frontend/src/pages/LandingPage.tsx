@@ -29,6 +29,24 @@ interface LandingPageProps {
   onLanguageChange: (lang: Language) => void;
 }
 
+const RotationalGlobe: React.FC = () => (
+  <div
+    className="relative flex items-center justify-center overflow-hidden rounded-full bg-zinc-950 border border-zinc-800/80 shrink-0"
+    style={{ width: 104, height: 104 }}
+  >
+    <div
+      className="absolute inset-0 w-full h-full animate-globe-spin"
+      style={{
+        backgroundImage: "url('https://unpkg.com/three-globe/example/img/earth-dark.jpg')",
+        backgroundSize: 'auto 100%',
+        backgroundRepeat: 'repeat-x',
+        filter: 'brightness(2.1) contrast(1.2) grayscale(1)',
+      }}
+    />
+    <div className="absolute inset-0 rounded-full shadow-[inset_-19px_-19px_30px_rgba(0,0,0,0.9),inset_9px_9px_19px_rgba(255,255,255,0.2)] pointer-events-none" />
+  </div>
+);
+
 export const LandingPage: React.FC<LandingPageProps> = ({ currentLang, onLanguageChange }) => {
   const t = translations[currentLang];
   const navigate = useNavigate();
@@ -99,13 +117,16 @@ export const LandingPage: React.FC<LandingPageProps> = ({ currentLang, onLanguag
 
       {/* Vantagens Section */}
       <section className="pb-12 pt-14 px-32 space-y-16 bg-[#0f1117] border-b border-[#1e222e]">
-        <div className='flex flex-col'>
-          <h2 className='text-2xl'>
-            Repasses Antecipados
-          </h2>
-          <p className='max-w-[600px] text-zinc-400'>
-            Diversas Plataformas seguram sua arrecadação até após o dia do evento. Nosso Emissor conta com repasses antecipados. Assim você tem maior fluxo de caixa para investir em atrações, publicidade, divulgação e aumentar o valor dos seus ingressos e lotes.
-          </p>
+        <div className='flex items-start justify-between gap-8'>
+          <div className='flex flex-col'>
+            <h2 className='text-2xl'>
+              Repasses Antecipados
+            </h2>
+            <p className='max-w-[600px] text-zinc-400'>
+              Diversas Plataformas seguram sua arrecadação até após o dia do evento. Nosso Emissor conta com repasses antecipados. Assim você tem maior fluxo de caixa para investir em atrações, publicidade, divulgação e aumentar o valor dos seus ingressos e lotes.
+            </p>
+          </div>
+          <RotationalGlobe />
         </div>
         <div className='flex flex-col w-full text-end'>
           <h2 className='text-2xl -mb-3'>
@@ -132,9 +153,97 @@ export const LandingPage: React.FC<LandingPageProps> = ({ currentLang, onLanguag
         </div>
       </section>
 
-      {/* Powered by Digital Garage Gallery */}
-      <section className="border-b bg-[#0f1117] border-[#1e222e] flex justify-end">
-          <img className="w-[41%]" src="/dg-photo-scanning.png" alt="" />
+      {/* Featured Events & Powered by Digital Garage Gallery */}
+      <section className="border-b bg-[#0f1117] border-[#1e222e] flex flex-col lg:flex-row items-stretch justify-between">
+        <div className="w-full lg:w-[59%] px-8 md:px-14 lg:px-16 pt-8 pb-12 flex flex-col">
+          {/* Rotational Globe */}
+          <div className="flex justify-start">
+            <RotationalGlobe />
+          </div>
+
+          <div className="my-auto py-8 grid grid-cols-2 gap-x-2 gap-y-20 items-center">
+            {[
+              {
+                name: 'IDOLZ',
+                logo: '/idolz-logo.svg',
+                lettering: null,
+                location: 'Budapest, Hungary',
+                url: 'https://www.instagram.com/idolz_official/',
+              },
+              {
+                name: 'FuoriConcorso',
+                logo: '/logo-fuoriconcorso.svg',
+                lettering: '/lettering-fuoriconcorso.svg',
+                location: 'Lake Como, Italy',
+                url: 'https://www.instagram.com/fuoriconcorso/',
+              },
+              {
+                name: 'Players Shows',
+                logo: '/players-logo.webp',
+                lettering: null,
+                logoClass: 'max-h-20',
+                location: 'Goodwood, United Kingdom',
+                url: null,
+              },
+              {
+                name: 'Capital Race',
+                logo: '/capital-race-logo.webp',
+                lettering: null,
+                logoClass: 'max-h-14',
+                location: 'Curitiba, Brazil',
+                url: null,
+              },
+            ].map((ev, idx) => {
+              const logoContent = ev.logo ? (
+                ev.lettering ? (
+                  <div className="flex flex-col items-center gap-5">
+                    <img
+                      src={ev.logo}
+                      alt={ev.name}
+                      className="h-12 w-auto object-contain"
+                    />
+                    <img
+                      src={ev.lettering}
+                      alt={`${ev.name} lettering`}
+                      className="h-3.5 w-auto object-contain"
+                    />
+                  </div>
+                ) : (
+                  <img
+                    src={ev.logo}
+                    alt={ev.name}
+                    className={`${ev.logoClass || 'max-h-12'} w-auto object-contain`}
+                  />
+                )
+              ) : (
+                <div className="h-12 flex items-center justify-center text-xs font-mono text-zinc-600">
+                  {ev.name}
+                </div>
+              );
+
+              return (
+                <div key={idx} className="flex flex-col items-center justify-center gap-2.5">
+                  {ev.url ? (
+                    <a href={ev.url} target="_blank" rel="noopener noreferrer" className="hover:opacity-80 transition">
+                      {logoContent}
+                    </a>
+                  ) : (
+                    logoContent
+                  )}
+                  <span className="text-xs text-zinc-400 font-mono">
+                    {ev.location}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        <img
+          className="w-full lg:w-[41%] object-cover"
+          src="/dg-photo-scanning.png"
+          alt="Digital Garage Gate Scanning"
+        />
       </section>
 
       {/* Footer */}
