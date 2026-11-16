@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { LandingPage } from './pages/LandingPage';
+import { FindEventsV2 } from './pages/FindEventsV2';
 import { ClientCheckout } from './pages/ClientCheckout';
 import { OrganizerDashboard } from './pages/OrganizerDashboard';
 import { TicketSuccess } from './pages/TicketSuccess';
@@ -15,6 +16,24 @@ export function App() {
         path="/"
         element={
           <LandingPage
+            currentLang={currentLang}
+            onLanguageChange={setCurrentLang}
+          />
+        }
+      />
+      <Route
+        path="/eventos-v2"
+        element={
+          <FindEventsV2
+            currentLang={currentLang}
+            onLanguageChange={setCurrentLang}
+          />
+        }
+      />
+      <Route
+        path="/events-v2"
+        element={
+          <FindEventsV2
             currentLang={currentLang}
             onLanguageChange={setCurrentLang}
           />

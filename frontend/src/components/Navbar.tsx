@@ -41,14 +41,16 @@ export const Navbar: React.FC<NavbarProps> = ({ currentLang, onLanguageChange })
           </Link> */}
 
           <Link
-            to="/checkout"
+            to="/eventos-v2"
             className={`px-3 py-2 rounded-lg text-xs font-bold transition-all flex items-end gap-1.5 ${
-              location.pathname.startsWith('/checkout') 
+              location.pathname.startsWith('/eventos-v2') ||
+              location.pathname.startsWith('/events-v2') ||
+              location.pathname.startsWith('/checkout')
                 ? 'bg-[#15171e] text-dg-cyan border border-dg-cyan/40 shadow-neonCyan' 
                 : 'text-zinc-400 hover:text-white'
             }`}
           >
-            <Ticket className="w-5 h-5 text-black" />
+            <Ticket className="w-4 h-4" />
             <span>{t.navCarMeets}</span>
           </Link>
 
