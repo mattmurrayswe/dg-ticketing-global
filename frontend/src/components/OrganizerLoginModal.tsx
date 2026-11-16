@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { organizerLogin } from '../services/api';
 import { Language, translations } from '../i18n/translations';
-import { Lock, Mail, Key, ShieldCheck, Loader2, AlertCircle } from 'lucide-react';
+import { Lock, Mail, Key, ShieldCheck, Loader2, AlertCircle, Eye, EyeOff } from 'lucide-react';
 
 interface OrganizerLoginModalProps {
   currentLang: Language;
@@ -12,6 +12,7 @@ export const OrganizerLoginModal: React.FC<OrganizerLoginModalProps> = ({ curren
   const t = translations[currentLang];
   const [email, setEmail] = useState('admin@digitalgarage.com.br');
   const [password, setPassword] = useState('admin123');
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -42,11 +43,14 @@ export const OrganizerLoginModal: React.FC<OrganizerLoginModalProps> = ({ curren
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="text-xs font-bold text-zinc-300 block mb-1">E-mail do Organizador</label>
+            <label htmlFor="organizer-email" className="text-xs font-bold text-zinc-300 block mb-1">E-mail do Organizador</label>
             <div className="relative">
-              <Mail className="w-4 h-4 text-zinc-400 absolute left-3 top-3" />
+              <Mail className="w-4 h-4 text-zinc-400 absolute left-3 top-3" aria-hidden="true" />
               <input
+                id="organizer-email"
+                name="email"
                 type="email"
+                autoComplete="username"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -57,17 +61,33 @@ export const OrganizerLoginModal: React.FC<OrganizerLoginModalProps> = ({ curren
           </div>
 
           <div>
-            <label className="text-xs font-bold text-zinc-300 block mb-1">Senha de Acesso</label>
+            <label htmlFor="organizer-password" className="text-xs font-bold text-zinc-300 block mb-1">Senha de Acesso</label>
             <div className="relative">
-              <Key className="w-4 h-4 text-zinc-400 absolute left-3 top-3" />
+              <Key className="w-4 h-4 text-zinc-400 absolute left-3 top-3" aria-hidden="true" />
               <input
-                type="password"
+                id="organizer-password"
+                name="password"
+                type={showPassword ? 'text' : 'password'}
+                autoComplete="current-password"
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full bg-[#08090b] border border-[#1e222e] rounded-xl pl-9 pr-3 py-2.5 text-xs text-white focus:border-dg-cyan"
+                className="w-full bg-[#08090b] border border-[#1e222e] rounded-xl pl-9 pr-10 py-2.5 text-xs text-white focus:border-dg-cyan"
               />
+              <button
+                type="button"
+                onClick={() => setShowPassword((prev) => !prev)}
+                aria-pressed={showPassword}
+                aria-label={showPassword ? 'Ocultar senha' : 'Mostrar senha'}
+                className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 min-w-[28px] min-h-[28px] flex items-center justify-center text-zinc-400 hover:text-white rounded-md transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-dg-cyan"
+              >
+                {showPassword ? (
+                  <EyeOff className="w-4 h-4" aria-hidden="true" />
+                ) : (
+                  <Eye className="w-4 h-4" aria-hidden="true" />
+                )}
+              </button>
             </div>
           </div>
 
