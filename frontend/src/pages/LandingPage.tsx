@@ -183,7 +183,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ currentLang, onLanguag
                 lettering: null,
                 logoClass: 'max-h-20',
                 location: 'Goodwood, United Kingdom',
-                url: null,
+                url: 'https://www.instagram.com/players_shows',
               },
               {
                 name: 'Capital Race',
@@ -191,7 +191,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ currentLang, onLanguag
                 lettering: null,
                 logoClass: 'max-h-14',
                 location: 'Curitiba, Brazil',
-                url: null,
+                url: 'https://www.instagram.com/capitalrace',
               },
             ].map((ev, idx) => {
               const logoContent = ev.logo ? (

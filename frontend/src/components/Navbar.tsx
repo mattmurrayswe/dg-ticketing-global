@@ -46,7 +46,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentLang, onLanguageChange })
               location.pathname.startsWith('/eventos-v2') ||
               location.pathname.startsWith('/events-v2') ||
               location.pathname.startsWith('/checkout')
-                ? 'bg-[#15171e] text-dg-cyan border border-dg-cyan/40 shadow-neonCyan' 
+                ? 'bg-[#15171e] text-white border border-white/30' 
                 : 'text-zinc-400 hover:text-white'
             }`}
           >
@@ -58,7 +58,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentLang, onLanguageChange })
             to="/organizer"
             className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-end gap-1 ${
               location.pathname.startsWith('/organizer') 
-                ? 'bg-dg-cyan text-black shadow-lg shadow-cyan-500/20 font-extrabold' 
+                ? 'bg-white text-black shadow-lg shadow-white/10 font-extrabold' 
                 : 'text-zinc-400 hover:text-white'
             }`}
           >

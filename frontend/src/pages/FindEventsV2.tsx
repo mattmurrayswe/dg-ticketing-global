@@ -28,7 +28,7 @@ const copyByLang: Record<
     eyebrow: 'De GearHead para GearHead',
     title: 'Encontre Eventos',
     subtitle:
-      'Descubra encontros automotivos, track days e exposições pelo Brasil com ingresso Expositor ou Pedestre via PIX e Cartão.',
+      'Descubra encontros automotivos, track days e exposições, car meets no Brasil e no mundo.',
     organizersTitle: 'Organizadores de Eventos',
     organizersSubtitle:
       'Encontros automotivos impulsionados pela Digital Garage.',
@@ -101,7 +101,7 @@ const LANDING_ORGANIZERS: LandingOrganizer[] = [
     lettering: null,
     logoClass: 'max-h-14',
     location: 'Goodwood, United Kingdom',
-    url: null,
+    url: 'https://www.instagram.com/players_shows',
   },
   {
     name: 'Capital Race',
@@ -109,7 +109,7 @@ const LANDING_ORGANIZERS: LandingOrganizer[] = [
     lettering: null,
     logoClass: 'max-h-12',
     location: 'Curitiba, Brazil',
-    url: null,
+    url: 'https://www.instagram.com/capitalrace',
   },
 ];
 
