@@ -56,13 +56,13 @@ export const Navbar: React.FC<NavbarProps> = ({ currentLang, onLanguageChange })
 
           <Link
             to="/organizer"
-            className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-end gap-1 ${
-              location.pathname.startsWith('/organizer') 
-                ? 'bg-white text-black shadow-lg shadow-white/10 font-extrabold' 
+            className={`px-3 py-2 rounded-lg text-xs font-bold transition-all flex items-end gap-1.5 ${
+              location.pathname.startsWith('/organizer')
+                ? 'bg-[#15171e] text-white border border-white/30' 
                 : 'text-zinc-400 hover:text-white'
             }`}
           >
-            <BarChart2 className="w-5 h-5" />
+            <BarChart2 className="w-4 h-4" />
             <span>{t.navOrganizer}</span>
           </Link>
 

@@ -13,6 +13,26 @@ interface OrganizerDashboardProps {
   onLanguageChange: (lang: Language) => void;
 }
 
+const RotationalGlobe: React.FC<{ size?: number }> = ({ size = 88 }) => (
+  <div
+    className="relative flex items-center justify-center overflow-hidden rounded-full bg-zinc-950 border border-zinc-800/80 shrink-0"
+    style={{ width: size, height: size }}
+    aria-hidden="true"
+  >
+    <div
+      className="absolute inset-0 w-full h-full animate-globe-spin"
+      style={{
+        backgroundImage:
+          "url('https://unpkg.com/three-globe/example/img/earth-dark.jpg')",
+        backgroundSize: 'auto 100%',
+        backgroundRepeat: 'repeat-x',
+        filter: 'brightness(2.1) contrast(1.2) grayscale(1)',
+      }}
+    />
+    <div className="absolute inset-0 rounded-full shadow-[inset_-19px_-19px_30px_rgba(0,0,0,0.9),inset_9px_9px_19px_rgba(255,255,255,0.2)] pointer-events-none" />
+  </div>
+);
+
 export const OrganizerDashboard: React.FC<OrganizerDashboardProps> = ({ currentLang, onLanguageChange }) => {
   const t = translations[currentLang];
   const [token, setToken] = useState<string | null>(() => localStorage.getItem('dg_organizer_token'));
@@ -97,50 +117,59 @@ export const OrganizerDashboard: React.FC<OrganizerDashboardProps> = ({ currentL
     <div className="min-h-screen bg-[#08090b] text-white pb-20">
       <Navbar currentLang={currentLang} onLanguageChange={onLanguageChange} />
 
-      {/* Sober Header Title */}
-      <section className="bg-[#0f1117] border-b border-[#1e222e] py-8 px-4">
-        <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
-          <div>
-            <div className="flex items-center gap-2 mb-2">
-              <img src="/dg-com-br.png" alt="Digital Garage" className="h-7 w-auto object-contain" />
-              <span className="px-2.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 text-[10px] font-mono font-bold uppercase">
-                {organizerInfo?.name || 'ADMINISTRADOR'}
-              </span>
+      {/* Editorial Hero (matching FindEventsV2.tsx) */}
+      <section className="relative pt-14 pb-12 px-4 sm:px-8 border-b border-[#1e222e] bg-gradient-to-b from-[#0d0e14] to-[#08090b]">
+        <div className="max-w-6xl mx-auto">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+            <div className="max-w-3xl">
+              <p className="font-markazi text-[1.6rem] text-zinc-400 leading-tight">
+                {organizerInfo?.name || 'De GearHead para GearHead'}
+              </p>
+              <h1 className="text-4xl lg:text-4xl font-medium font-markazi text-white tracking-wide leading-tight">
+                {t.organizerPortalTitle}
+              </h1>
+              <p className="font-markazi text-lg text-zinc-400 max-w-xl leading-snug">
+                Gestão financeira de bilheteria, check-in no portão e criação de novos eventos.
+              </p>
             </div>
-            <h1 className="text-xl lg:text-2xl font-bold text-white tracking-tight">
-              {t.organizerPortalTitle}
-            </h1>
-            <p className="text-xs text-zinc-400">Gestão financeira de bilheteria, check-in no portão e criação de novos eventos.</p>
+
+            <div className="hidden md:flex items-center gap-5 shrink-0">
+              <RotationalGlobe size={88} />
+            </div>
           </div>
+        </div>
+      </section>
 
-          <div className="flex flex-wrap items-center gap-2">
-            <button
-              type="button"
-              onClick={() => setShowEventConfigModal(true)}
-              className="px-4 py-2.5 bg-dg-cyan hover:bg-cyan-400 text-black font-extrabold rounded-xl text-xs uppercase tracking-wider transition flex items-center gap-2 shadow-md"
-            >
-              <Plus className="w-4 h-4" />
-              Criar Novo Evento
-            </button>
+      {/* Action Bar */}
+      <section className="max-w-7xl mx-auto px-4 mt-6">
+        <div className="flex flex-wrap items-center justify-end gap-2.5">
+          <button
+            type="button"
+            onClick={() => setShowEventConfigModal(true)}
+            className="px-4 py-2.5 bg-dg-cyan hover:bg-cyan-400 text-black font-extrabold rounded-xl text-xs uppercase tracking-wider transition flex items-center gap-2 shadow-md"
+          >
+            <Plus className="w-4 h-4" />
+            Criar Novo Evento
+          </button>
 
-            <button
-              type="button"
-              onClick={() => setShowCortesiaModal(true)}
-              className="px-4 py-2.5 bg-[#151720] hover:bg-zinc-800 text-white border border-[#1e222e] font-bold rounded-xl text-xs uppercase tracking-wider transition flex items-center gap-2"
-            >
-              <Gift className="w-4 h-4 text-dg-cyan" />
-              {t.cortesiaTitle}
-            </button>
+          <button
+            type="button"
+            onClick={() => setShowCortesiaModal(true)}
+            className="px-4 py-2.5 bg-[#151720] hover:bg-zinc-800 text-white border border-[#1e222e] font-bold rounded-xl text-xs uppercase tracking-wider transition flex items-center gap-2"
+          >
+            <Gift className="w-4 h-4 text-dg-cyan" />
+            {t.cortesiaTitle}
+          </button>
 
-            <button
-              type="button"
-              onClick={handleLogout}
-              className="px-3 py-2.5 bg-[#151720] hover:bg-red-500/20 text-zinc-400 hover:text-red-400 border border-[#1e222e] rounded-xl transition flex items-center gap-1.5 text-xs font-bold"
-              title="Sair da Conta"
-            >
-              <LogOut className="w-4 h-4" />
-            </button>
-          </div>
+          <button
+            type="button"
+            onClick={handleLogout}
+            className="px-3 py-2.5 bg-[#151720] hover:bg-red-500/20 text-zinc-400 hover:text-red-400 border border-[#1e222e] rounded-xl transition flex items-center gap-1.5 text-xs font-bold"
+            title="Sair da Conta"
+            aria-label="Sair da Conta"
+          >
+            <LogOut className="w-4 h-4" />
+          </button>
         </div>
       </section>
 
