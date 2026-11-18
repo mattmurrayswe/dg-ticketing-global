@@ -41,6 +41,24 @@ export function App() {
         }
       />
       <Route
+        path="/eventos/:slug"
+        element={
+          <ClientCheckout
+            currentLang={currentLang}
+            onLanguageChange={setCurrentLang}
+          />
+        }
+      />
+      <Route
+        path="/events/:slug"
+        element={
+          <ClientCheckout
+            currentLang={currentLang}
+            onLanguageChange={setCurrentLang}
+          />
+        }
+      />
+      <Route
         path="/checkout"
         element={
           <ClientCheckout

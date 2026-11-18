@@ -19,11 +19,19 @@ def seed_default_organizer(db: Session):
         admin = OrganizerUser(
             email="admin@digitalgarage.com.br",
             hashed_password=hash_password("admin123"),
-            name="Digital Garage Master Admin",
+            name="Master Admin",
             role="admin"
         )
         db.add(admin)
         db.commit()
+    else:
+        existing_admin = db.query(OrganizerUser).filter(
+            OrganizerUser.email == "admin@digitalgarage.com.br",
+            OrganizerUser.name == "Digital Garage Master Admin",
+        ).first()
+        if existing_admin:
+            existing_admin.name = "Master Admin"
+            db.commit()
 
 
 class OrganizerLoginRequest(BaseModel):

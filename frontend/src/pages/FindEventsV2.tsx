@@ -15,6 +15,7 @@ const copyByLang: Record<
     eyebrow: string;
     title: string;
     subtitle: string;
+    buyTicket: string;
     organizersTitle: string;
     organizersSubtitle: string;
     visitInstagram: string;
@@ -29,6 +30,7 @@ const copyByLang: Record<
     title: 'Encontre Eventos',
     subtitle:
       'Descubra encontros automotivos, track days e exposições, car meets no Brasil e no mundo.',
+    buyTicket: 'Comprar',
     organizersTitle: 'Organizadores de Eventos',
     organizersSubtitle:
       'Encontros automotivos impulsionados pela Digital Garage.',
@@ -44,6 +46,7 @@ const copyByLang: Record<
     title: 'Find Upcoming Car Meets & Automotive Events.',
     subtitle:
       'Discover car meets, track days, and paddock showcases with Exhibitor or Spectator passes via instant PIX and Credit Card.',
+    buyTicket: 'Buy',
     organizersTitle: 'Featured Organizers & Partners',
     organizersSubtitle:
       'Automotive collectives and car meets powered by Digital Garage.',
@@ -59,6 +62,7 @@ const copyByLang: Record<
     title: 'Trova i Prossimi Raduni & Eventi Auto.',
     subtitle:
       'Scopri car meet, track day ed esposizioni con pass Espositore o Spettatore tramite PIX e Carta di Credito.',
+    buyTicket: 'Acquista',
     organizersTitle: 'Organizzatori & Partner in Evidenza',
     organizersSubtitle:
       'Collettivi e raduni automobilistici supportati da Digital Garage.',
@@ -73,6 +77,7 @@ const copyByLang: Record<
 
 interface LandingOrganizer {
   name: string;
+  eventSlug: string;
   logo: string;
   lettering: string | null;
   logoClass?: string;
@@ -83,6 +88,7 @@ interface LandingOrganizer {
 const LANDING_ORGANIZERS: LandingOrganizer[] = [
   {
     name: 'IDOLZ',
+    eventSlug: 'idolz',
     logo: '/idolz-logo.svg',
     lettering: null,
     location: 'Budapest, Hungary',
@@ -90,6 +96,7 @@ const LANDING_ORGANIZERS: LandingOrganizer[] = [
   },
   {
     name: 'FuoriConcorso',
+    eventSlug: 'fuoriconcorso',
     logo: '/logo-fuoriconcorso.svg',
     lettering: '/lettering-fuoriconcorso.svg',
     location: 'Lake Como, Italy',
@@ -97,6 +104,7 @@ const LANDING_ORGANIZERS: LandingOrganizer[] = [
   },
   {
     name: 'Players Shows',
+    eventSlug: 'players-shows',
     logo: '/players-logo.webp',
     lettering: null,
     logoClass: 'max-h-14',
@@ -105,6 +113,7 @@ const LANDING_ORGANIZERS: LandingOrganizer[] = [
   },
   {
     name: 'Capital Race',
+    eventSlug: 'capital-race',
     logo: '/capital-race-logo.webp',
     lettering: null,
     logoClass: 'max-h-12',
@@ -159,8 +168,10 @@ export const FindEventsV2: React.FC<FindEventsV2Props> = ({
               </p>
             </div>
 
-            <div className="hidden md:flex items-center gap-5 shrink-0">
-              <RotationalGlobe size={88} />
+            <div className="relative hidden md:flex items-center justify-center w-[88px] h-[88px] shrink-0">
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                <RotationalGlobe size={120} />
+              </div>
             </div>
           </div>
         </div>
@@ -221,14 +232,14 @@ export const FindEventsV2: React.FC<FindEventsV2Props> = ({
                   </p>
                 </div>
 
-                {org.url && (
-                  <div className="w-full pt-2 border-t border-[#1e222e] flex justify-center">
+                <div className="w-full pt-2 border-t border-[#1e222e] flex flex-col items-center gap-2">
+                  {org.url && (
                     <a
                       href={org.url}
                       target="_blank"
                       rel="noopener noreferrer"
                       aria-label={`${org.name} ${c.visitInstagram}`}
-                      className="inline-flex items-center gap-1.5 py-1.5 px-3 rounded-lg bg-[#0f1117] border border-[#1e222e] text-xs font-mono text-zinc-300 hover:text-white transition"
+                      className="w-32 inline-flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-lg bg-[#0f1117] border border-[#1e222e] text-xs font-mono text-zinc-300 hover:text-white transition"
                     >
                       <span>{c.visitInstagram}</span>
                       <ExternalLink
@@ -236,8 +247,14 @@ export const FindEventsV2: React.FC<FindEventsV2Props> = ({
                         aria-hidden="true"
                       />
                     </a>
-                  </div>
-                )}
+                  )}
+                  <Link
+                    to={`/eventos/${org.eventSlug}`}
+                    className="w-32 inline-flex items-center justify-center py-1.5 px-3 rounded-lg bg-[#0f1117] border border-[#1e222e] text-xs font-mono text-zinc-300 hover:text-white transition"
+                  >
+                    {c.buyTicket}
+                  </Link>
+                </div>
               </div>
             ))}
           </div>

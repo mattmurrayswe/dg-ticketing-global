@@ -172,7 +172,7 @@ export const OrganizerDashboardV2: React.FC<OrganizerDashboardV2Props> = ({
           <div className="max-w-3xl">
             <div className="flex items-center gap-3 mb-1">
               <p className="font-markazi text-[1.6rem] text-zinc-400 leading-tight">
-                {organizerInfo?.name || 'De GearHead para GearHead'}
+                {(organizerInfo?.name === 'Digital Garage Master Admin' ? 'Master Admin' : organizerInfo?.name) || 'De GearHead para GearHead'}
               </p>
               <span className="px-2.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 text-[10px] font-mono font-bold uppercase">
                 ONLINE

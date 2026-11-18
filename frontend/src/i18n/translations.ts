@@ -41,7 +41,7 @@ export const translations = {
     sendWhatsApp: "Receber no WhatsApp",
     sendEmail: "Receber por E-mail",
     printPdf: "Imprimir Passe / PDF",
-    organizerPortalTitle: "Painel do Organizador - Digital Garage",
+    organizerPortalTitle: "Área do Organizador",
     totalRevenue: "Receita Total em Vendas",
     ticketsSold: "Ingressos Vendidos",
     carsRegistered: "Veículos Cadastrados",

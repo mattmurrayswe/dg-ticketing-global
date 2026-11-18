@@ -1,20 +1,59 @@
 import React, { useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { Link, useParams, useSearchParams } from 'react-router-dom';
 import { fetchEvents, createCheckout, CarMeetEvent, TicketTier } from '../services/api';
 import { Language, translations } from '../i18n/translations';
 import { CouponInput } from '../components/CouponInput';
 import { TicketPassModal } from '../components/TicketPassModal';
 import { Navbar } from '../components/Navbar';
-import { Car, Ticket, Calendar, MapPin, QrCode, CreditCard, Check, Copy, ArrowRight, Loader2, ShieldCheck } from 'lucide-react';
+import { Car, Ticket, Calendar, MapPin, QrCode, CreditCard, Check, Copy, ArrowLeft, ArrowRight, Loader2, ShieldCheck } from 'lucide-react';
 
 interface ClientCheckoutProps {
   currentLang: Language;
   onLanguageChange: (lang: Language) => void;
 }
 
+const FEATURED_ORGANIZER_EVENTS: Record<
+  string,
+  { title: string; subtitle: string; city: string; location: string; date: string; banner_url: string }
+> = {
+  idolz: {
+    title: 'IDOLZ Official Car Meet',
+    subtitle: 'Budapest Automotive Showcase',
+    city: 'Budapest, Hungary',
+    location: 'Budapest, Hungary',
+    date: 'Em breve',
+    banner_url: '/idolz-logo.svg',
+  },
+  fuoriconcorso: {
+    title: 'FuoriConcorso',
+    subtitle: 'Lake Como Automotive Gathering',
+    city: 'Lake Como, Italy',
+    location: 'Lake Como, Italy',
+    date: 'Em breve',
+    banner_url: '/logo-fuoriconcorso.svg',
+  },
+  'players-shows': {
+    title: 'Players Shows',
+    subtitle: 'Goodwood Car Culture Showcase',
+    city: 'Goodwood, United Kingdom',
+    location: 'Goodwood, United Kingdom',
+    date: 'Em breve',
+    banner_url: '/players-logo.webp',
+  },
+  'capital-race': {
+    title: 'Capital Race',
+    subtitle: 'Curitiba Car Meet & Track Experience',
+    city: 'Curitiba, Brazil',
+    location: 'Curitiba, Brazil',
+    date: 'Em breve',
+    banner_url: '/capital-race-logo.webp',
+  },
+};
+
 export const ClientCheckout: React.FC<ClientCheckoutProps> = ({ currentLang, onLanguageChange }) => {
+  const { slug: routeSlug } = useParams<{ slug?: string }>();
   const [searchParams] = useSearchParams();
-  const slugParam = searchParams.get('slug');
+  const slugParam = routeSlug || searchParams.get('slug');
   const eventIdParam = searchParams.get('event_id');
   const isDedicatedView = Boolean(slugParam || eventIdParam);
 
@@ -46,23 +85,46 @@ export const ClientCheckout: React.FC<ClientCheckoutProps> = ({ currentLang, onL
   const [finalAmountBrl, setFinalAmountBrl] = useState<number>(0);
 
   // Checkout process
+  const [eventsLoading, setEventsLoading] = useState(true);
   const [loading, setLoading] = useState(false);
   const [orderResult, setOrderResult] = useState<any | null>(null);
   const [copiedPix, setCopiedPix] = useState(false);
 
   useEffect(() => {
-    fetchEvents().then((data) => {
-      setEvents(data);
-      if (data.length > 0) {
-        const target = data.find((e) => e.slug === slugParam || String(e.id) === eventIdParam) || data[0];
-        setSelectedEvent(target);
-        if (target.tiers.length > 0) {
-          setSelectedTier(target.tiers[0]);
-          setFinalAmountBrl(target.tiers[0].price_brl);
+    setEventsLoading(true);
+    fetchEvents()
+      .then((data) => {
+        setEvents(data);
+        if (data.length > 0) {
+          const matchedEvent = data.find((e) => e.slug === slugParam || String(e.id) === eventIdParam);
+          const featuredFallback = slugParam ? FEATURED_ORGANIZER_EVENTS[slugParam] : undefined;
+          const target = isDedicatedView
+            ? matchedEvent ||
+              (featuredFallback
+                ? {
+                    ...data[0],
+                    slug: slugParam!,
+                    title: featuredFallback.title,
+                    subtitle: featuredFallback.subtitle,
+                    city: featuredFallback.city,
+                    location: featuredFallback.location,
+                    date: featuredFallback.date,
+                    banner_url: featuredFallback.banner_url,
+                  }
+                : null)
+            : data[0];
+          setSelectedEvent(target);
+          if (target && target.tiers.length > 0) {
+            setSelectedTier(target.tiers[0]);
+            setFinalAmountBrl(target.tiers[0].price_brl);
+          } else {
+            setSelectedTier(null);
+            setFinalAmountBrl(0);
+          }
         }
-      }
-    });
-  }, [slugParam, eventIdParam]);
+      })
+      .finally(() => setEventsLoading(false));
+  }, [slugParam, eventIdParam, isDedicatedView]);
 
   const handleTierSelect = (tier: TicketTier) => {
     setSelectedTier(tier);
@@ -146,21 +208,50 @@ export const ClientCheckout: React.FC<ClientCheckoutProps> = ({ currentLang, onL
           
           {/* Dedicated Event View vs Multi-Event Catalog View */}
           {isDedicatedView && selectedEvent ? (
-            <div className="p-4 rounded-xl bg-[#151720] border border-dg-cyan/40 max-w-2xl mx-auto flex items-center gap-4 text-left shadow-neonCyan animate-fadeIn">
-              <img
-                src={selectedEvent.banner_url}
-                alt={selectedEvent.title}
-                className="w-20 h-20 rounded-xl object-cover border border-[#1e222e]"
-              />
-              <div className="overflow-hidden">
-                <span className="px-2.5 py-0.5 rounded-full bg-dg-cyan/10 text-dg-cyan text-[10px] font-mono font-bold uppercase border border-dg-cyan/30">
-                  Ingressos Oficiais do Evento
-                </span>
-                <h2 className="text-lg font-bold text-white mt-1 truncate">{selectedEvent.title}</h2>
-                <p className="text-xs text-zinc-400 flex items-center gap-1 mt-0.5 truncate">
-                  <Calendar className="w-3.5 h-3.5 text-dg-cyan" /> {selectedEvent.date} &bull; <MapPin className="w-3.5 h-3.5 text-zinc-400" /> {selectedEvent.city}
-                </p>
+            <div className="max-w-3xl mx-auto space-y-4 text-left animate-fadeIn">
+              <Link
+                to="/eventos-v2"
+                className="inline-flex items-center gap-1.5 text-xs font-mono text-zinc-400 hover:text-dg-cyan transition"
+              >
+                <ArrowLeft className="w-3.5 h-3.5" />
+                Voltar para Encontre Eventos
+              </Link>
+              <div className="p-4 sm:p-5 rounded-xl bg-[#151720] border border-dg-cyan/40 flex flex-col sm:flex-row items-start sm:items-center gap-4 shadow-neonCyan">
+                <img
+                  src={selectedEvent.banner_url}
+                  alt={selectedEvent.title}
+                  className="w-full sm:w-24 h-36 sm:h-24 rounded-xl object-cover border border-[#1e222e] shrink-0"
+                />
+                <div className="overflow-hidden space-y-1">
+                  <span className="inline-block px-2.5 py-0.5 rounded-full bg-dg-cyan/10 text-dg-cyan text-[10px] font-mono font-bold uppercase border border-dg-cyan/30">
+                    Ingressos Oficiais do Evento
+                  </span>
+                  <h1 className="text-xl font-bold text-white">{selectedEvent.title}</h1>
+                  <p className="text-xs text-zinc-400 flex flex-wrap items-center gap-x-2 gap-y-1">
+                    <span className="inline-flex items-center gap-1">
+                      <Calendar className="w-3.5 h-3.5 text-dg-cyan" /> {selectedEvent.date}
+                    </span>
+                    <span>&bull;</span>
+                    <span className="inline-flex items-center gap-1">
+                      <MapPin className="w-3.5 h-3.5 text-zinc-400" /> {selectedEvent.location || selectedEvent.city}
+                    </span>
+                  </p>
+                  {selectedEvent.description && (
+                    <p className="text-xs text-zinc-400 pt-1 line-clamp-2">{selectedEvent.description}</p>
+                  )}
+                </div>
               </div>
+            </div>
+          ) : isDedicatedView && !eventsLoading && !selectedEvent ? (
+            <div className="max-w-xl mx-auto p-6 rounded-xl bg-[#151720] border border-[#1e222e] text-center space-y-3">
+              <p className="text-sm font-bold text-white">Evento não encontrado.</p>
+              <Link
+                to="/eventos-v2"
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-dg-red text-white text-xs font-bold uppercase tracking-wider hover:bg-red-500 transition"
+              >
+                <ArrowLeft className="w-3.5 h-3.5" />
+                Voltar para Encontre Eventos
+              </Link>
             </div>
           ) : (
             /* Event Selector Cards */
