@@ -113,7 +113,7 @@ const copyByLang: Record<Language, FlowCopy> = {
     pageTitleEvent: 'Criar Evento — Informações do Evento | Digital Garage',
     pageTitleSuccess: 'Evento Publicado | Digital Garage',
     eyebrow: 'De GearHead para GearHead',
-    heroTitle: 'Configurar seu Evento!',
+    heroTitle: 'Configurando seu Evento',
     heroLead: 'Vamos configurar seu evento!',
     heroP1:
       'A partir daqui você contribui para a expansão do Brasil no cenário Global Automotivo! Os GearHeads agradecem!',
@@ -820,7 +820,7 @@ export const CreateEventFlow: React.FC<CreateEventFlowProps> = ({
   };
 
   const inputClass =
-    'dg-control w-full bg-[#0f1117] border border-[#1e222e] rounded-md px-3.5 py-2.5 text-white placeholder:text-zinc-600 transition';
+    'dg-control w-full bg-[#0b0d12]/90 border border-[#262a36] rounded-md px-3.5 py-2.5 text-white placeholder:text-zinc-500 transition';
   const landingPrimaryButtonClass =
     'underline underline-offset-4 decoration-zinc-700 border-2 border-[#1e222e] hover:border-white/40 rounded-md px-6 py-2 font-markazi text-xl bg-gradient-to-tr from-black to-[#0f1117] text-white transition inline-flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white min-h-[48px]';
   const landingSecondaryButtonClass =
@@ -844,17 +844,17 @@ export const CreateEventFlow: React.FC<CreateEventFlowProps> = ({
         {/* LEFT 40%: Top Globe + Editorial Text + End Logo */}
         <section
           aria-labelledby={`${uid}-hero-heading`}
-          className="relative min-w-0 bg-gradient-to-b from-[#0d0e14] to-[#08090b] border-b lg:border-b-0 px-6 pt-5 pb-10 sm:px-10 lg:px-12 lg:pt-5 lg:pb-12 flex flex-col justify-start"
+          className="relative min-w-0 bg-gradient-to-b from-[#0d0e14] to-[#08090b] border-b border-[#141720] lg:border-b-0 lg:border-r lg:border-[#141720] px-6 pt-5 pb-10 sm:px-10 lg:px-12 lg:pt-5 lg:pb-12 flex flex-col justify-start"
         >
-          <div
-            aria-hidden="true"
-            className="hidden lg:block absolute right-0 top-10 h-44 w-px bg-gradient-to-b from-[#1e222e] to-transparent pointer-events-none"
-          />
 
-          <div className="max-w-md mx-auto lg:mx-0 space-y-5">
-            <div className="flex justify-end">
+          <div className="max-w-md mx-auto lg:mx-0">
+            <div className="flex justify-end pr-4">
               <RotationalGlobe size={88} />
             </div>
+
+            <p className="mt-11 font-markazi text-2xl text-zinc-200 leading-snug">
+              {c.heroLead}
+            </p>
 
             <h1
               id={`${uid}-hero-heading`}
@@ -862,18 +862,23 @@ export const CreateEventFlow: React.FC<CreateEventFlowProps> = ({
             >
               {c.heroTitle}
             </h1>
+          </div>
+          <div>
+            <ul
+              role="list"
+              className="mt-12 space-y-6 font-markazi text-xl text-zinc-400 pt-1 list-none"
+            >
+              {[c.heroP1, c.heroP2, c.heroP3].map((item, idx) => (
+                <li key={idx} className="flex items-start gap-2.5">
+                  <span aria-hidden="true" className="text-zinc-400 shrink-0">
+                    -
+                  </span>
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
 
-            <p className="font-markazi text-2xl text-zinc-200 leading-snug">
-              {c.heroLead}
-            </p>
-
-            <div className="space-y-3 font-markazi text-xl text-zinc-400 leading-relaxed pt-1">
-              <p>{c.heroP1}</p>
-              <p>{c.heroP2}</p>
-              <p>{c.heroP3}</p>
-            </div>
-
-            <div className="pt-4 flex justify-end">
+            <div className="pt-14 flex justify-end pr-3">
               <img
                 src="/dg-com-br.png"
                 alt="Digital Garage"
@@ -886,11 +891,11 @@ export const CreateEventFlow: React.FC<CreateEventFlowProps> = ({
         {/* RIGHT 60%: Clean, Single-Column Form Workspace */}
         <section
           aria-label={stepLabel}
-          className="min-w-0 bg-[#08090b] px-6 py-10 sm:px-10 lg:pl-10 lg:pr-12 lg:py-14 flex flex-col justify-center"
+          className="min-w-0 dg-parede-queimada px-6 py-10 sm:px-10 lg:pl-10 lg:pr-12 lg:py-14 flex flex-col justify-center"
         >
-          <div className="w-full max-w-lg mx-auto lg:mx-0 space-y-6">
+          <div className="w-full max-w-lg mx-auto lg:mx-0">
             {/* Minimal Step Caption & Session Indicator */}
-            <div className="flex flex-wrap items-center justify-between gap-2 text-xs font-mono text-zinc-500">
+            <div className="flex flex-col gap-2 mb-1 text-xs font-mono text-zinc-500">
               <span>{stepLabel}</span>
               {token && organizerInfo && step !== 'account' && (
                 <span>
@@ -1728,6 +1733,49 @@ export const CreateEventFlow: React.FC<CreateEventFlowProps> = ({
           </div>
         </section>
       </main>
+
+      <footer className="bg-[#050608] border-t border-[#1e222e] py-8 sm:py-10 px-6 sm:px-10 lg:px-12">
+        <div className="max-w-5xl mx-auto flex flex-wrap items-center justify-between gap-6">
+          <div className="flex items-center gap-4">
+            <img
+              src="/dg-com-br.png"
+              alt="Digital Garage"
+              className="h-11 sm:h-12 w-auto object-contain"
+            />
+            <span className="text-zinc-500 text-3xl sm:text-4xl font-[100]" aria-hidden="true">|</span>
+            <span className="font-markazi text-zinc-300 text-xl sm:text-2xl pt-1">
+              A Plataforma do GearHead
+            </span>
+          </div>
+
+          <div className="flex items-center gap-7 pr-2 sm:pr-6">
+            <a
+              href="https://pagar.me"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="opacity-90 hover:opacity-100 transition"
+            >
+              <img
+                src="/pagarme-logo.svg"
+                alt="Pagar.me V5 PIX"
+                className="h-8 sm:h-9 w-auto object-contain"
+              />
+            </a>
+            <a
+              href="https://stripe.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="opacity-90 hover:opacity-100 transition"
+            >
+              <img
+                src="/stripe-logo.png"
+                alt="Stripe Payments"
+                className="h-6 sm:h-9 w-auto object-contain"
+              />
+            </a>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 };

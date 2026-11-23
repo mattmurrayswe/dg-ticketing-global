@@ -95,3 +95,9 @@ h2, h3, h4, h5, h6, .font-heading, .font-righteous {
 .dg-field:has(.dg-control:is(:user-invalid, .user-invalid-fallback)) .dg-error-msg {
   display: flex;
 }
+
+/* Subtle dark gradient for the right panel (right to left) */
+.dg-parede-queimada {
+  background-color: #0b0c11;
+  background-image: linear-gradient(to left, #101219 0%, #0b0c11 55%, #08090b 100%);
+}
