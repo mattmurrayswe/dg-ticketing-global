@@ -27,7 +27,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentLang, onLanguageChange })
         </Link>
 
         {/* Navigation Links */}
-        <nav className="flex items-center gap-1.5 sm:gap-2">
+        <nav className="flex items-center gap-0.5">
           {/* <Link
             to="/"
             className={`px-3 py-2 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${
@@ -42,7 +42,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentLang, onLanguageChange })
 
           <Link
             to="/eventos-v2"
-            className={`px-3 py-2 rounded text-xs font-bold transition-all flex items-end gap-1.5 ${
+            className={`px-2 py-2 rounded text-xs font-bold transition-all flex items-end gap-1.5 ${
               location.pathname.startsWith('/eventos-v2') ||
               location.pathname.startsWith('/events-v2') ||
               location.pathname.startsWith('/checkout')
@@ -56,7 +56,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentLang, onLanguageChange })
 
           <Link
             to="/organizer"
-            className={`px-3 py-2 rounded text-xs font-bold transition-all flex items-end gap-1.5 ${
+            className={`px-2 py-2 rounded text-xs font-bold transition-all flex items-end gap-1.5 ${
               location.pathname.startsWith('/organizer')
                 ? 'bg-[#15171e] text-white border border-white/30' 
                 : 'text-zinc-400 hover:text-white'
@@ -67,7 +67,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentLang, onLanguageChange })
           </Link>
 
           {/* Language Selector */}
-          <div className="ml-1 sm:ml-2">
+          <div className="ml-1">
             <LanguageSelector currentLang={currentLang} onLanguageChange={onLanguageChange} />
           </div>
         </nav>
