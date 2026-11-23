@@ -11,6 +11,9 @@ class OrganizerUser(Base):
     email = Column(String(150), unique=True, index=True, nullable=False)
     hashed_password = Column(String(255), nullable=False)
     name = Column(String(150), nullable=False)
+    phone = Column(String(50), nullable=True)
+    organization = Column(String(150), nullable=True)
+    instagram = Column(String(120), nullable=True)
     role = Column(String(50), default="organizer")
     created_at = Column(DateTime, default=datetime.utcnow)
 
@@ -19,6 +22,7 @@ class Event(Base):
     __tablename__ = "events"
 
     id = Column(Integer, primary_key=True, index=True)
+    organizer_id = Column(Integer, ForeignKey("organizers.id"), nullable=True)
     slug = Column(String(100), unique=True, index=True, nullable=False)
     title = Column(String(200), nullable=False)
     subtitle = Column(String(250), nullable=True)

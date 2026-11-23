@@ -74,13 +74,30 @@ export const getOrderDetails = async (orderCode: string) => {
   return resp.data;
 };
 
+export interface OrganizerSignupPayload {
+  name: string;
+  email: string;
+  password: string;
+  phone?: string;
+  organization?: string;
+  instagram?: string;
+}
+
+export const organizerSignup = async (payload: OrganizerSignupPayload) => {
+  const resp = await api.post('/organizer/signup', payload);
+  return resp.data;
+};
+
 export const organizerLogin = async (email: string, password: string) => {
   const resp = await api.post('/organizer/login', { email, password });
   return resp.data;
 };
 
-export const createNewEvent = async (payload: any) => {
-  const resp = await api.post('/organizer/events/create', payload);
+export const createNewEvent = async (payload: any, authToken?: string | null) => {
+  const token = authToken ?? localStorage.getItem('dg_organizer_token');
+  const resp = await api.post('/organizer/events/create', payload, {
+    headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+  });
   return resp.data;
 };
 

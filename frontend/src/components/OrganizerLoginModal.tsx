@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { organizerLogin } from '../services/api';
 import { Language, translations } from '../i18n/translations';
 import { Lock, Mail, Key, ShieldCheck, Loader2, AlertCircle, Eye, EyeOff } from 'lucide-react';
@@ -115,6 +116,15 @@ export const OrganizerLoginModal: React.FC<OrganizerLoginModalProps> = ({ curren
               </>
             )}
           </button>
+
+          <div className="pt-2 border-t border-[#1e222e] text-center">
+            <Link
+              to="/criar-evento"
+              className="font-markazi text-xl underline underline-offset-4 decoration-zinc-700 text-zinc-300 hover:text-white transition"
+            >
+              Ainda não tem conta? Cadastre-se e Crie Seu Evento
+            </Link>
+          </div>
         </form>
       </div>
     </div>

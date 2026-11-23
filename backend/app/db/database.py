@@ -1,5 +1,5 @@
 import os
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, inspect, text
 from sqlalchemy.orm import declarative_base, sessionmaker
 
 DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./dg_ticketing.db")
@@ -22,7 +22,21 @@ def get_db():
         db.close()
 
 
+def _ensure_column(conn, table_name: str, column_name: str, ddl_type: str):
+    inspector = inspect(conn)
+    if not inspector.has_table(table_name):
+        return
+    existing = {col["name"] for col in inspector.get_columns(table_name)}
+    if column_name not in existing:
+        conn.execute(text(f"ALTER TABLE {table_name} ADD COLUMN {column_name} {ddl_type}"))
+
+
 def init_db():
     from app.db import models  # noqa: F401
     Base.metadata.create_all(bind=engine)
+    with engine.begin() as conn:
+        _ensure_column(conn, "organizers", "phone", "VARCHAR(50)")
+        _ensure_column(conn, "organizers", "organization", "VARCHAR(150)")
+        _ensure_column(conn, "organizers", "instagram", "VARCHAR(120)")
+        _ensure_column(conn, "events", "organizer_id", "INTEGER")
     print("Database tables initialized successfully.")

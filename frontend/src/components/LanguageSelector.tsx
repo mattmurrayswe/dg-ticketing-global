@@ -9,8 +9,8 @@ interface LanguageSelectorProps {
 
 export const LanguageSelector: React.FC<LanguageSelectorProps> = ({ currentLang, onLanguageChange }) => {
   return (
-    <div className="w-28 flex items-center bg-[#12141a] p-1 rounded border border-[#1e222e]">
-      <Globe className="h-4 text-zinc-400 mx-0.5" />
+    <div className="w-auto shrink-0 flex items-center bg-[#12141a] p-1 rounded border border-[#1e222e]">
+      <Globe className="h-3.5 w-3.5 text-zinc-400 mx-0.5 shrink-0 hidden sm:block" aria-hidden="true" />
       <button
         type="button"
         onClick={() => onLanguageChange('pt')}

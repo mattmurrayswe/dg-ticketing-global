@@ -54,3 +54,44 @@ h2, h3, h4, h5, h6, .font-heading, .font-righteous {
 .animate-globe-spin {
   animation: globe-spin 19s linear infinite;
 }
+
+/* Accessible visually-hidden utility (keeps element in accessibility tree) */
+.visually-hidden:where(:not(:focus-within, :active)) {
+  position: absolute !important;
+  clip-path: inset(50%) !important;
+  overflow: hidden !important;
+  width: 1px !important;
+  height: 1px !important;
+  margin: -1px !important;
+  padding: 0 !important;
+  border: 0 !important;
+  white-space: nowrap !important;
+}
+
+/* Validate input only after interaction (:user-invalid + JS fallback) */
+.dg-control {
+  font-size: max(1rem, 1em);
+  min-height: 48px;
+}
+
+.dg-control:focus-visible {
+  outline: 2px solid #e2e8f0;
+  outline-offset: 2px;
+}
+
+.dg-control:is(:user-invalid, .user-invalid-fallback) {
+  border-color: #ef4444 !important;
+  background-color: rgba(239, 68, 68, 0.08) !important;
+}
+
+.dg-control:is(:user-valid, .user-valid-fallback) {
+  border-color: rgba(16, 185, 129, 0.45);
+}
+
+.dg-error-msg {
+  display: none;
+}
+
+.dg-field:has(.dg-control:is(:user-invalid, .user-invalid-fallback)) .dg-error-msg {
+  display: flex;
+}

@@ -84,7 +84,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ currentLang, onLanguag
           </p>
           <Link
             className='font-markazi text-2xl underline underline-offset-4'
-            to={"/organizer"}
+            to={"/criar-evento"}
           >
               Criar Novo Evento
           </Link>
@@ -147,7 +147,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ currentLang, onLanguag
           </p>
         </div>
         <div className='text-center pt-6'>
-          <Link className='underline underline-offset-4 decoration-zinc-700 border-2 border-[#1e222e] rounded-md px-6 py-2 font-markazi text-xl bg-gradient-to-tr from-black to-[#0f1117]' to="/organizer">
+          <Link className='underline underline-offset-4 decoration-zinc-700 border-2 border-[#1e222e] rounded-md px-6 py-2 font-markazi text-xl bg-gradient-to-tr from-black to-[#0f1117]' to="/criar-evento">
               Criar Novo Evento
           </Link>
         </div>

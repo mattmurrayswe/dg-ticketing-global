@@ -287,7 +287,7 @@ export const FindEventsV2: React.FC<FindEventsV2Props> = ({
               className="h-7 object-contain opacity-80"
             />
             <Link
-              to="/organizer"
+              to="/criar-evento"
               className="underline underline-offset-4 decoration-zinc-700 border-2 border-[#1e222e] hover:border-dg-cyan/50 rounded-md px-5 py-2 font-markazi text-xl bg-gradient-to-tr from-black to-[#0f1117] text-white transition"
             >
               {c.createEvent}

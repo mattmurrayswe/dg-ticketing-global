@@ -5,6 +5,7 @@ import { FindEventsV2 } from './pages/FindEventsV2';
 import { ClientCheckout } from './pages/ClientCheckout';
 import { OrganizerDashboard } from './pages/OrganizerDashboard';
 import { OrganizerDashboardV2 } from './pages/OrganizerDashboardV2';
+import { CreateEventFlow } from './pages/CreateEventFlow';
 import { TicketSuccess } from './pages/TicketSuccess';
 import { Language } from './i18n/translations';
 
@@ -62,6 +63,33 @@ export function App() {
         path="/checkout"
         element={
           <ClientCheckout
+            currentLang={currentLang}
+            onLanguageChange={setCurrentLang}
+          />
+        }
+      />
+      <Route
+        path="/criar-evento"
+        element={
+          <CreateEventFlow
+            currentLang={currentLang}
+            onLanguageChange={setCurrentLang}
+          />
+        }
+      />
+      <Route
+        path="/create-event"
+        element={
+          <CreateEventFlow
+            currentLang={currentLang}
+            onLanguageChange={setCurrentLang}
+          />
+        }
+      />
+      <Route
+        path="/organizer/signup"
+        element={
+          <CreateEventFlow
             currentLang={currentLang}
             onLanguageChange={setCurrentLang}
           />

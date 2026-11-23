@@ -2,13 +2,16 @@ from datetime import datetime
 from fastapi import APIRouter, Depends, HTTPException, Header
 from pydantic import BaseModel
 from typing import Optional, List
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 from app.db.database import get_db
 from app.db.models import TicketOrder, TicketTier, Event, OrganizerUser
 from app.core.security import hash_password, verify_password, create_organizer_token, verify_organizer_token
 from app.services.email_service import send_ticket_email
 from app.services.whatsapp_service import send_whatsapp_notification
+import re
 import secrets
+import unicodedata
 
 router = APIRouter(prefix="/api/organizer", tags=["Organizer"])
 
@@ -37,6 +40,33 @@ def seed_default_organizer(db: Session):
 class OrganizerLoginRequest(BaseModel):
     email: str
     password: str
+
+
+class OrganizerSignupRequest(BaseModel):
+    name: str
+    email: str
+    password: str
+    phone: Optional[str] = None
+    organization: Optional[str] = None
+    instagram: Optional[str] = None
+
+
+def _build_organizer_payload(user: OrganizerUser) -> dict:
+    return {
+        "id": user.id,
+        "name": user.name,
+        "email": user.email,
+        "role": user.role,
+        "phone": user.phone,
+        "organization": user.organization,
+        "instagram": user.instagram,
+    }
+
+
+def _slugify(value: str) -> str:
+    normalized = unicodedata.normalize("NFKD", value).encode("ascii", "ignore").decode("ascii")
+    cleaned = re.sub(r"[^a-z0-9]+", "-", normalized.lower()).strip("-")
+    return cleaned or "evento"
 
 
 class CreateTierSchema(BaseModel):
@@ -78,11 +108,54 @@ class CortesiaIssueRequest(BaseModel):
     license_plate: Optional[str] = None
 
 
+@router.post("/signup")
+def organizer_signup(req: OrganizerSignupRequest, db: Session = Depends(get_db)):
+    """Registers a new event organizer account and returns an access token."""
+    seed_default_organizer(db)
+
+    name = req.name.strip()
+    email = req.email.strip().lower()
+    if len(name) < 2:
+        raise HTTPException(status_code=400, detail="Informe o nome completo do organizador.")
+    if "@" not in email or "." not in email.split("@", 1)[-1]:
+        raise HTTPException(status_code=400, detail="Informe um e-mail válido.")
+    if len(req.password) < 8:
+        raise HTTPException(status_code=400, detail="A senha deve ter pelo menos 8 caracteres.")
+
+    existing = db.query(OrganizerUser).filter(func.lower(OrganizerUser.email) == email).first()
+    if existing:
+        raise HTTPException(
+            status_code=409,
+            detail="Já existe uma conta cadastrada com este e-mail. Faça login para continuar."
+        )
+
+    user = OrganizerUser(
+        email=email,
+        hashed_password=hash_password(req.password),
+        name=name,
+        phone=req.phone.strip() if req.phone and req.phone.strip() else None,
+        organization=req.organization.strip() if req.organization and req.organization.strip() else None,
+        instagram=req.instagram.strip() if req.instagram and req.instagram.strip() else None,
+        role="organizer",
+    )
+    db.add(user)
+    db.commit()
+    db.refresh(user)
+
+    token = create_organizer_token(user.email)
+    return {
+        "status": "success",
+        "token": token,
+        "organizer": _build_organizer_payload(user),
+    }
+
+
 @router.post("/login")
 def organizer_login(req: OrganizerLoginRequest, db: Session = Depends(get_db)):
     """Authenticates event organizer and returns access token."""
     seed_default_organizer(db)
-    user = db.query(OrganizerUser).filter(OrganizerUser.email == req.email.strip()).first()
+    email = req.email.strip().lower()
+    user = db.query(OrganizerUser).filter(func.lower(OrganizerUser.email) == email).first()
     if not user or not verify_password(req.password, user.hashed_password):
         raise HTTPException(status_code=401, detail="E-mail ou senha do organizador incorretos")
 
@@ -90,30 +163,44 @@ def organizer_login(req: OrganizerLoginRequest, db: Session = Depends(get_db)):
     return {
         "status": "success",
         "token": token,
-        "organizer": {
-            "id": user.id,
-            "name": user.name,
-            "email": user.email,
-            "role": user.role
-        }
+        "organizer": _build_organizer_payload(user),
     }
 
 
 @router.post("/events/create")
-def create_new_event(req: CreateEventRequest, db: Session = Depends(get_db)):
+def create_new_event(
+    req: CreateEventRequest,
+    authorization: Optional[str] = Header(default=None),
+    db: Session = Depends(get_db),
+):
     """Creates a new Car Meet Event and configures its ticket tiers."""
-    slug = req.title.lower().replace(" ", "-").replace("/", "-") + "-" + secrets.token_hex(2)
-    
+    if not req.title.strip() or not req.date.strip() or not req.location.strip() or not req.city.strip():
+        raise HTTPException(status_code=400, detail="Preencha título, data, local e cidade do evento.")
+    if not req.tiers:
+        raise HTTPException(status_code=400, detail="Configure pelo menos um lote de ingresso.")
+
+    organizer_id = None
+    if authorization and authorization.startswith("Bearer "):
+        token = authorization.split(" ", 1)[1].strip()
+        auth_email = verify_organizer_token(token)
+        if auth_email:
+            organizer = db.query(OrganizerUser).filter(func.lower(OrganizerUser.email) == auth_email.lower()).first()
+            if organizer:
+                organizer_id = organizer.id
+
+    slug = f"{_slugify(req.title)}-{secrets.token_hex(2)}"
+
     event = Event(
+        organizer_id=organizer_id,
         slug=slug,
-        title=req.title,
-        subtitle=req.subtitle,
-        date=req.date,
-        location=req.location,
-        address=req.address,
-        city=req.city,
-        banner_url=req.banner_url or "https://images.unsplash.com/photo-1542282088-72c9c27ed0cd?auto=format&fit=crop&w=1200&q=80",
-        description=req.description,
+        title=req.title.strip(),
+        subtitle=req.subtitle.strip() if req.subtitle and req.subtitle.strip() else None,
+        date=req.date.strip(),
+        location=req.location.strip(),
+        address=req.address.strip() if req.address and req.address.strip() else None,
+        city=req.city.strip(),
+        banner_url=req.banner_url.strip() if req.banner_url and req.banner_url.strip() else "https://images.unsplash.com/photo-1542282088-72c9c27ed0cd?auto=format&fit=crop&w=1200&q=80",
+        description=req.description.strip() if req.description and req.description.strip() else None,
         status="active"
     )
     db.add(event)
@@ -124,7 +211,7 @@ def create_new_event(req: CreateEventRequest, db: Session = Depends(get_db)):
     for t_schema in req.tiers:
         tier = TicketTier(
             event_id=event.id,
-            name=t_schema.name,
+            name=t_schema.name.strip() or "Ingresso",
             badge=t_schema.badge,
             price_brl=t_schema.price_brl,
             price_usd=t_schema.price_usd,
@@ -144,6 +231,7 @@ def create_new_event(req: CreateEventRequest, db: Session = Depends(get_db)):
         "message": f"Evento '{event.title}' criado e configurado com sucesso!",
         "event_id": event.id,
         "slug": event.slug,
+        "title": event.title,
         "total_tiers_configured": len(created_tiers)
     }
 
