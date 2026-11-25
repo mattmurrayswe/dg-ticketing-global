@@ -190,13 +190,12 @@ export const OrganizerDashboardV2: React.FC<OrganizerDashboardV2Props> = ({
 
             {/* Landing-style Editorial CTAs */}
             <div className="flex flex-wrap items-center gap-3">
-              <button
-                type="button"
-                onClick={() => setShowEventConfigModal(true)}
-                className="underline underline-offset-4 decoration-zinc-700 border-2 border-[#1e222e] hover:border-white/40 rounded-md px-6 py-2 font-markazi text-xl bg-gradient-to-tr from-black to-[#0f1117] text-white transition"
+              <Link
+                to="/criar-evento"
+                className="underline underline-offset-4 decoration-zinc-700 border-2 border-[#1e222e] hover:border-white/40 rounded-md px-6 py-2 font-markazi text-xl bg-gradient-to-tr from-black to-[#0f1117] text-white transition inline-flex items-center"
               >
                 + Criar Novo Evento
-              </button>
+              </Link>
 
               <button
                 type="button"

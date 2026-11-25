@@ -1,13 +1,16 @@
 import secrets
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi.responses import Response
 from pydantic import BaseModel
 from typing import Optional
 from sqlalchemy.orm import Session
+from app.config.settings import SMTP_PASS, SMTP_USER
 from app.db.database import get_db
 from app.db.models import TicketOrder, TicketTier, Event, Coupon
 from app.services.pagarme_service import create_pagarme_pix_charge
 from app.services.stripe_service import create_stripe_checkout_session
 from app.services.email_service import send_ticket_email
+from app.services.ticket_pdf_service import generate_ticket_pdf, generate_ticket_qr_base64
 from app.services.whatsapp_service import send_whatsapp_notification
 
 router = APIRouter(prefix="/api/checkout", tags=["Checkout"])
@@ -141,15 +144,24 @@ def create_checkout(req: CheckoutRequest, db: Session = Depends(get_db)):
     order_data = {
         "order_code": order_code,
         "buyer_name": req.buyer_name,
+        "buyer_email": req.buyer_email,
+        "buyer_phone": req.buyer_phone,
         "event_title": event.title,
+        "event_subtitle": event.subtitle,
         "event_date": event.date,
         "event_location": event.location,
+        "event_address": event.address,
+        "event_city": event.city,
         "tier_name": tier.name,
         "car_make": req.car_make,
         "car_model": req.car_model,
         "car_year": req.car_year,
         "car_color": req.car_color,
-        "license_plate": req.license_plate
+        "license_plate": req.license_plate,
+        "payment_method": req.payment_method,
+        "payment_status": order.payment_status,
+        "total_amount_brl": total_amount,
+        "currency": order.currency,
     }
     
     send_ticket_email(req.buyer_email, order_data)
@@ -164,24 +176,22 @@ def create_checkout(req: CheckoutRequest, db: Session = Depends(get_db)):
         "applied_coupon": applied_code,
         "discount_brl": discount,
         "payment_details": payment_payload,
+        "ticket_qr_base64": generate_ticket_qr_base64(order_code),
+        "pdf_url": f"/api/checkout/order/{order_code}/pdf",
         "whatsapp_link": wa_res.get("deep_link")
     }
 
 
-@router.get("/order/{order_code}")
-def get_order(order_code: str, db: Session = Depends(get_db)):
-    order = db.query(TicketOrder).filter(TicketOrder.order_code == order_code).first()
-    if not order:
-        raise HTTPException(status_code=404, detail="Order not found")
-
-    event = db.query(Event).filter(Event.id == order.event_id).first()
-    tier = db.query(TicketTier).filter(TicketTier.id == order.ticket_tier_id).first()
-
+def _build_order_ticket_payload(order: TicketOrder, event: Optional[Event], tier: Optional[TicketTier]) -> dict:
     return {
         "order_code": order.order_code,
         "event_title": event.title if event else "Digital Garage Car Meet",
+        "event_subtitle": event.subtitle if event else None,
         "event_date": event.date if event else "",
         "event_location": event.location if event else "",
+        "event_address": event.address if event else None,
+        "event_city": event.city if event else None,
+        "event_banner_url": event.banner_url if event else None,
         "tier_name": tier.name if tier else "",
         "buyer_name": order.buyer_name,
         "buyer_email": order.buyer_email,
@@ -197,7 +207,67 @@ def get_order(order_code: str, db: Session = Depends(get_db)):
         "currency": order.currency,
         "pix_copy_paste": order.pix_copy_paste,
         "pix_qr_code_base64": order.pix_qr_code,
+        "ticket_qr_base64": generate_ticket_qr_base64(order.order_code),
+        "pdf_url": f"/api/checkout/order/{order.order_code}/pdf",
         "checked_in": order.checked_in,
         "checked_in_at": order.checked_in_at.isoformat() if order.checked_in_at else None,
-        "created_at": order.created_at.isoformat()
+        "created_at": order.created_at.isoformat(),
+    }
+
+
+def _get_order_entities(order_code: str, db: Session):
+    order = db.query(TicketOrder).filter(TicketOrder.order_code == order_code).first()
+    if not order:
+        raise HTTPException(status_code=404, detail="Order not found")
+    event = db.query(Event).filter(Event.id == order.event_id).first()
+    tier = db.query(TicketTier).filter(TicketTier.id == order.ticket_tier_id).first()
+    return order, event, tier
+
+
+@router.get("/order/{order_code}")
+def get_order(order_code: str, db: Session = Depends(get_db)):
+    order, event, tier = _get_order_entities(order_code, db)
+    return _build_order_ticket_payload(order, event, tier)
+
+
+@router.get("/order/{order_code}/pdf")
+def download_order_pdf(
+    order_code: str,
+    inline: bool = Query(False, description="Render inline for browser/mobile preview instead of attachment download"),
+    db: Session = Depends(get_db),
+):
+    order, event, tier = _get_order_entities(order_code, db)
+    order_data = _build_order_ticket_payload(order, event, tier)
+    pdf_bytes = generate_ticket_pdf(order_data)
+    disposition = "inline" if inline else "attachment"
+    return Response(
+        content=pdf_bytes,
+        media_type="application/pdf",
+        headers={
+            "Content-Disposition": f'{disposition}; filename="Ingresso-DigitalGarage-{order.order_code}.pdf"',
+            "Cache-Control": "no-store",
+        },
+    )
+
+
+class ResendEmailRequest(BaseModel):
+    email: Optional[str] = None
+
+
+@router.post("/order/{order_code}/send-email")
+def resend_order_email(
+    order_code: str,
+    req: Optional[ResendEmailRequest] = None,
+    db: Session = Depends(get_db),
+):
+    order, event, tier = _get_order_entities(order_code, db)
+    recipient = (req.email.strip() if req and req.email else order.buyer_email)
+    order_data = _build_order_ticket_payload(order, event, tier)
+    ok = send_ticket_email(recipient, order_data)
+    if not ok:
+        raise HTTPException(status_code=500, detail="Falha ao enviar ingresso por e-mail")
+    return {
+        "status": "success",
+        "sent_to": recipient,
+        "simulated": not bool(SMTP_PASS and SMTP_USER),
     }

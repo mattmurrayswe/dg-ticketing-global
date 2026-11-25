@@ -170,7 +170,7 @@ const copyByLang: Record<Language, FlowCopy> = {
     tierQty: 'Vagas *',
     tierRequiresCar: 'Exige cadastro do veículo (Expositor)',
     backBtn: 'Voltar',
-    publishBtn: 'Criar Novo Evento',
+    publishBtn: 'Finalizar',
     publishingBtn: 'Publicando...',
     successHeading: 'Evento Publicado com Sucesso.',
     successSub: 'Seu link de vendas já está pronto para divulgar ao seu público.',
@@ -852,13 +852,13 @@ export const CreateEventFlow: React.FC<CreateEventFlowProps> = ({
               <RotationalGlobe size={88} />
             </div>
 
-            <p className="mt-11 font-markazi text-2xl text-zinc-200 leading-snug">
+            <p className="mt-11 font-markazi text-2xl text-zinc-200 leading-none">
               {c.heroLead}
             </p>
 
             <h1
               id={`${uid}-hero-heading`}
-              className="text-4xl lg:text-5xl font-medium font-markazi text-white tracking-wide leading-tight"
+              className="mt-0 text-4xl lg:text-5xl font-medium font-markazi text-white tracking-wide leading-tight"
             >
               {c.heroTitle}
             </h1>
@@ -866,7 +866,7 @@ export const CreateEventFlow: React.FC<CreateEventFlowProps> = ({
           <div>
             <ul
               role="list"
-              className="mt-12 space-y-6 font-markazi text-xl text-zinc-400 pt-1 list-none"
+              className="mt-12 space-y-14 font-markazi text-xl text-zinc-100 pt-1 list-none max-w-sm"
             >
               {[c.heroP1, c.heroP2, c.heroP3].map((item, idx) => (
                 <li key={idx} className="flex items-start gap-2.5">
@@ -878,7 +878,7 @@ export const CreateEventFlow: React.FC<CreateEventFlowProps> = ({
               ))}
             </ul>
 
-            <div className="pt-14 flex justify-end pr-3">
+            <div className="pt-10 flex justify-end pr-3">
               <img
                 src="/dg-com-br.png"
                 alt="Digital Garage"

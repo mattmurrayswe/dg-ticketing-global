@@ -26,7 +26,8 @@ export default {
       },
       boxShadow: {
         neonCyan: "0 0 20px rgba(0, 240, 255, 0.25)",
-        cardGlow: "0 8px 32px 0 rgba(0, 0, 0, 0.6)"
+        cardGlow: "0 8px 32px 0 rgba(0, 0, 0, 0.6)",
+        purplemodal: "-7px 8px 25px -5px rgb(0 0 0 / 0.1), 2px 8px 10px -6px rgb(0 0 0 / 0.1)"
       }
     },
   },

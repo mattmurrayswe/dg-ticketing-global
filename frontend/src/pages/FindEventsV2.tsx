@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Navbar } from '../components/Navbar';
 import { Language } from '../i18n/translations';
-import { ExternalLink, MapPin } from 'lucide-react';
+import { ExternalLink } from 'lucide-react';
 
 interface FindEventsV2Props {
   currentLang: Language;
@@ -91,6 +91,7 @@ const LANDING_ORGANIZERS: LandingOrganizer[] = [
     eventSlug: 'idolz',
     logo: '/idolz-logo.svg',
     lettering: null,
+    logoClass: 'max-h-8',
     location: 'Budapest, Hungary',
     url: 'https://www.instagram.com/idolz_official/',
   },
@@ -116,7 +117,7 @@ const LANDING_ORGANIZERS: LandingOrganizer[] = [
     eventSlug: 'capital-race',
     logo: '/capital-race-logo.webp',
     lettering: null,
-    logoClass: 'max-h-12',
+    logoClass: 'max-h-9',
     location: 'Curitiba, Brazil',
     url: 'https://www.instagram.com/capitalrace',
   },
@@ -205,12 +206,12 @@ export const FindEventsV2: React.FC<FindEventsV2Props> = ({
                       <img
                         src={org.logo}
                         alt={org.name}
-                        className="h-10 w-auto object-contain"
+                        className="h-8 w-auto object-contain"
                       />
                       <img
                         src={org.lettering}
                         alt={`${org.name} lettering`}
-                        className="h-3 w-auto object-contain"
+                        className="h-2.5 w-auto object-contain"
                       />
                     </>
                   ) : (
@@ -223,11 +224,7 @@ export const FindEventsV2: React.FC<FindEventsV2Props> = ({
                 </div>
 
                 <div className="text-center space-y-1">
-                  <p className="text-xs font-mono text-zinc-400 flex items-center justify-center gap-1">
-                    <MapPin
-                      className="w-3 h-3 text-dg-cyan"
-                      aria-hidden="true"
-                    />
+                  <p className="text-xs font-mono text-zinc-400">
                     {org.location}
                   </p>
                 </div>

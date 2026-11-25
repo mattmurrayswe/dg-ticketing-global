@@ -171,11 +171,12 @@ export const LandingPage: React.FC<LandingPageProps> = ({ currentLang, onLanguag
                 url: 'https://www.instagram.com/idolz_official/',
               },
               {
-                name: 'FuoriConcorso',
-                logo: '/logo-fuoriconcorso.svg',
-                lettering: '/lettering-fuoriconcorso.svg',
-                location: 'Lake Como, Italy',
-                url: 'https://www.instagram.com/fuoriconcorso/',
+                name: 'Capital Race',
+                logo: '/capital-race-logo.webp',
+                lettering: null,
+                logoClass: 'max-h-14',
+                location: 'Curitiba, Brazil',
+                url: 'https://www.instagram.com/capitalrace',
               },
               {
                 name: 'Players Shows',
@@ -186,12 +187,11 @@ export const LandingPage: React.FC<LandingPageProps> = ({ currentLang, onLanguag
                 url: 'https://www.instagram.com/players_shows',
               },
               {
-                name: 'Capital Race',
-                logo: '/capital-race-logo.webp',
-                lettering: null,
-                logoClass: 'max-h-14',
-                location: 'Curitiba, Brazil',
-                url: 'https://www.instagram.com/capitalrace',
+                name: 'FuoriConcorso',
+                logo: '/logo-fuoriconcorso.svg',
+                lettering: '/lettering-fuoriconcorso.svg',
+                location: 'Lake Como, Italy',
+                url: 'https://www.instagram.com/fuoriconcorso/',
               },
             ].map((ev, idx) => {
               const logoContent = ev.logo ? (

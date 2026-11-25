@@ -34,7 +34,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentLang, onLanguageChange })
         {!isCreateEventPage && (
           <Link
             to="/criar-evento"
-            className="hidden md:inline-flex md:absolute md:left-[46%] md:-translate-x-1/2 items-center px-3.5 py-2 rounded text-xs font-bold transition-all border bg-black text-white border-white/30 hover:bg-[#15171e]"
+            className="hidden md:inline-flex md:absolute md:left-[46%] md:-translate-x-1/2 items-center px-6 py-2.5 rounded text-xs font-bold transition-all border bg-gradient-to-tr from-black to-[#0f1117] text-white border-white/30 hover:from-[#0f1117] hover:to-[#181b24] hover:border-white/50"
           >
             <span>{t.navCreateEvent}</span>
           </Link>

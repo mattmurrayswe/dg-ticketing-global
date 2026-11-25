@@ -74,6 +74,28 @@ export const getOrderDetails = async (orderCode: string) => {
   return resp.data;
 };
 
+export const getTicketPdfUrl = (orderCode: string, inline = false) =>
+  `${API_BASE}/checkout/order/${encodeURIComponent(orderCode)}/pdf${inline ? '?inline=true' : ''}`;
+
+export const downloadTicketPdf = async (orderCode: string) => {
+  const resp = await api.get(`/checkout/order/${encodeURIComponent(orderCode)}/pdf`, {
+    responseType: 'blob',
+  });
+  const blobUrl = window.URL.createObjectURL(new Blob([resp.data], { type: 'application/pdf' }));
+  const link = document.createElement('a');
+  link.href = blobUrl;
+  link.download = `Ingresso-DigitalGarage-${orderCode}.pdf`;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  window.URL.revokeObjectURL(blobUrl);
+};
+
+export const resendTicketEmail = async (orderCode: string, email?: string) => {
+  const resp = await api.post(`/checkout/order/${encodeURIComponent(orderCode)}/send-email`, email ? { email } : {});
+  return resp.data;
+};
+
 export interface OrganizerSignupPayload {
   name: string;
   email: string;

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { BarChart2 } from 'lucide-react';
 import { getOrganizerDashboard, fetchEvents, CarMeetEvent } from '../services/api';
 import { Language, translations } from '../i18n/translations';
@@ -146,13 +147,12 @@ export const OrganizerDashboard: React.FC<OrganizerDashboardProps> = ({ currentL
       {/* Action Bar */}
       <section className="max-w-7xl mx-auto px-4 mt-6">
         <div className="flex flex-wrap items-center justify-end gap-2">
-          <button
-            type="button"
-            onClick={() => setShowEventConfigModal(true)}
-            className="px-3.5 py-2 rounded-lg text-xs font-bold transition-all bg-[#15171e] text-white border border-white/30 hover:border-white/50"
+          <Link
+            to="/criar-evento"
+            className="px-3.5 py-2 rounded-lg text-xs font-bold transition-all bg-[#15171e] text-white border border-white/30 hover:border-white/50 inline-flex items-center"
           >
             Criar Novo Evento
-          </button>
+          </Link>
 
           <button
             type="button"
