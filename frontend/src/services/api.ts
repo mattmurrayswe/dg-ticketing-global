@@ -124,7 +124,10 @@ export const createNewEvent = async (payload: any, authToken?: string | null) =>
 };
 
 export const getOrganizerDashboard = async () => {
-  const resp = await api.get('/organizer/dashboard');
+  const token = localStorage.getItem('dg_organizer_token');
+  const resp = await api.get('/organizer/dashboard', {
+    headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+  });
   return resp.data;
 };
 

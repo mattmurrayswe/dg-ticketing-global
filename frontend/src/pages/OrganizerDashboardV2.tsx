@@ -109,7 +109,7 @@ export const OrganizerDashboardV2: React.FC<OrganizerDashboardV2Props> = ({
   };
 
   const handleCopyEventLink = (slug: string) => {
-    const link = `${window.location.origin}/checkout?slug=${slug}`;
+    const link = `${window.location.origin}/eventos/${slug}`;
     navigator.clipboard.writeText(link);
     setCopiedSlug(slug);
     setTimeout(() => setCopiedSlug(null), 2500);

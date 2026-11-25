@@ -237,8 +237,31 @@ def create_new_event(
 
 
 @router.get("/dashboard")
-def get_organizer_dashboard(db: Session = Depends(get_db)):
-    """Returns overview analytics for the Digital Garage event host."""
+def get_organizer_dashboard(
+    authorization: Optional[str] = Header(default=None),
+    db: Session = Depends(get_db),
+):
+    """Returns overview analytics and events owned by the authenticated organizer."""
+    organizer = None
+    if authorization and authorization.startswith("Bearer "):
+        token = authorization.split(" ", 1)[1].strip()
+        auth_email = verify_organizer_token(token)
+        if auth_email:
+            organizer = db.query(OrganizerUser).filter(func.lower(OrganizerUser.email) == auth_email.lower()).first()
+
+    if organizer:
+        if organizer.role == "admin":
+            owned_events = db.query(Event).order_by(Event.id.desc()).all()
+        else:
+            owned_events = (
+                db.query(Event)
+                .filter(Event.organizer_id == organizer.id)
+                .order_by(Event.id.desc())
+                .all()
+            )
+    else:
+        owned_events = []
+
     orders = db.query(TicketOrder).all()
     
     real_time_sales_brl = sum(o.total_amount_brl for o in orders if o.payment_status in ["paid", "pending"])
@@ -285,7 +308,17 @@ def get_organizer_dashboard(db: Session = Depends(get_db)):
         "total_cars_registered": total_cars_registered,
         "total_checked_in": total_checked_in,
         "tier_stats": tier_stats,
-        "recent_orders": recent_orders
+        "recent_orders": recent_orders,
+        "organizer_events": [
+            {
+                "id": ev.id,
+                "slug": ev.slug,
+                "title": ev.title,
+                "date": ev.date,
+                "city": ev.city,
+            }
+            for ev in owned_events
+        ],
     }
 
 

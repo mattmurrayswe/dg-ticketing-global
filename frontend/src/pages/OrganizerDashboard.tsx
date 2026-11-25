@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { BarChart2 } from 'lucide-react';
-import { getOrganizerDashboard, fetchEvents, CarMeetEvent } from '../services/api';
+import { BarChart2, Check, Copy, Download, Loader2 } from 'lucide-react';
+import { getOrganizerDashboard, fetchEvents, downloadTicketPdf, CarMeetEvent } from '../services/api';
 import { Language, translations } from '../i18n/translations';
 import { Navbar } from '../components/Navbar';
 import { GateScanner } from '../components/GateScanner';
@@ -50,6 +50,26 @@ export const OrganizerDashboard: React.FC<OrganizerDashboardProps> = ({ currentL
   const [showCortesiaModal, setShowCortesiaModal] = useState(false);
   const [showEventConfigModal, setShowEventConfigModal] = useState(false);
   const [activeTab, setActiveTab] = useState<'scanner' | 'roster'>('roster');
+  const [copiedSlug, setCopiedSlug] = useState<string | null>(null);
+  const [downloadingOrderCode, setDownloadingOrderCode] = useState<string | null>(null);
+
+  const handleCopyCheckoutLink = (slug: string) => {
+    navigator.clipboard.writeText(`${window.location.origin}/eventos/${slug}`);
+    setCopiedSlug(slug);
+    setTimeout(() => setCopiedSlug(null), 2000);
+  };
+
+  const handleDownloadTicketPdf = async (orderCode: string) => {
+    if (!orderCode || downloadingOrderCode) return;
+    setDownloadingOrderCode(orderCode);
+    try {
+      await downloadTicketPdf(orderCode);
+    } catch (err) {
+      console.error('Failed to download ticket PDF:', err);
+    } finally {
+      setDownloadingOrderCode(null);
+    }
+  };
 
   const loadData = async () => {
     if (!token) return;
@@ -111,7 +131,13 @@ export const OrganizerDashboard: React.FC<OrganizerDashboardProps> = ({ currentL
   };
 
   if (!token) {
-    return <OrganizerLoginModal currentLang={currentLang} onLoginSuccess={handleLoginSuccess} />;
+    return (
+      <OrganizerLoginModal
+        currentLang={currentLang}
+        onLanguageChange={onLanguageChange}
+        onLoginSuccess={handleLoginSuccess}
+      />
+    );
   }
 
   return (
@@ -225,6 +251,38 @@ export const OrganizerDashboard: React.FC<OrganizerDashboardProps> = ({ currentL
 
           </div>
 
+          {/* Organizer Event Checkout Links */}
+          {Array.isArray(data.organizer_events) && data.organizer_events.length > 0 && (
+            <div className="mt-5 flex flex-wrap items-center gap-x-6 gap-y-2 text-xs font-mono">
+              {data.organizer_events.map((ev: { id: number; slug: string; title: string }) => {
+                const fullUrl = `${window.location.origin}/eventos/${ev.slug}`;
+                return (
+                  <div key={ev.id} className="inline-flex items-center gap-2">
+                    <Link
+                      to={`/eventos/${ev.slug}`}
+                      className="text-zinc-300 hover:text-white underline underline-offset-4 decoration-zinc-700 hover:decoration-white transition"
+                    >
+                      {ev.title} — {fullUrl}
+                    </Link>
+                    <button
+                      type="button"
+                      onClick={() => handleCopyCheckoutLink(ev.slug)}
+                      aria-label={`Copiar link de ${ev.title}`}
+                      title={copiedSlug === ev.slug ? 'Copiado!' : 'Copiar link'}
+                      className="p-1 text-zinc-400 hover:text-white transition cursor-pointer"
+                    >
+                      {copiedSlug === ev.slug ? (
+                        <Check className="w-3.5 h-3.5 text-emerald-400" aria-hidden="true" />
+                      ) : (
+                        <Copy className="w-3.5 h-3.5" aria-hidden="true" />
+                      )}
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+
           {/* Tab Navigation */}
           <div className="flex items-center gap-2 mt-8 mb-6 border-b border-[#1e222e] pb-3">
             <button
@@ -283,6 +341,7 @@ export const OrganizerDashboard: React.FC<OrganizerDashboardProps> = ({ currentL
                       <th className="py-3 px-3">Valor</th>
                       <th className="py-3 px-3">Status</th>
                       <th className="py-3 px-3">Portão</th>
+                      <th className="py-3 px-3 text-right">Ingresso</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-[#1e222e] text-zinc-200">
@@ -304,6 +363,22 @@ export const OrganizerDashboard: React.FC<OrganizerDashboardProps> = ({ currentL
                           ) : (
                             <span className="text-zinc-500">Pendente</span>
                           )}
+                        </td>
+                        <td className="py-3 px-3 text-right">
+                          <button
+                            type="button"
+                            onClick={() => handleDownloadTicketPdf(o.order_code)}
+                            disabled={downloadingOrderCode === o.order_code}
+                            aria-label={`Baixar ingresso PDF de ${o.order_code}`}
+                            className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded bg-[#15171e] border border-white/20 hover:border-white/40 text-[11px] font-bold text-white transition disabled:opacity-50 cursor-pointer"
+                          >
+                            {downloadingOrderCode === o.order_code ? (
+                              <Loader2 className="w-3.5 h-3.5 animate-spin" aria-hidden="true" />
+                            ) : (
+                              <Download className="w-3.5 h-3.5" aria-hidden="true" />
+                            )}
+                            <span>PDF</span>
+                          </button>
                         </td>
                       </tr>
                     ))}

@@ -1,21 +1,81 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { organizerLogin } from '../services/api';
-import { Language, translations } from '../i18n/translations';
-import { Lock, Mail, Key, ShieldCheck, Loader2, AlertCircle, Eye, EyeOff } from 'lucide-react';
+import { Language } from '../i18n/translations';
+import { Navbar } from './Navbar';
+import { AlertCircle, ArrowRight, Eye, EyeOff, Loader2 } from 'lucide-react';
 
 interface OrganizerLoginModalProps {
   currentLang: Language;
+  onLanguageChange?: (lang: Language) => void;
   onLoginSuccess: (token: string, organizer: any) => void;
 }
 
-export const OrganizerLoginModal: React.FC<OrganizerLoginModalProps> = ({ currentLang, onLoginSuccess }) => {
-  const t = translations[currentLang];
-  const [email, setEmail] = useState('admin@digitalgarage.com.br');
-  const [password, setPassword] = useState('admin123');
+const copyByLang: Record<
+  Language,
+  {
+    heading: string;
+    signupPrompt: string;
+    signupAction: string;
+    emailLabel: string;
+    passwordLabel: string;
+    showPassword: string;
+    hidePassword: string;
+    submit: string;
+    fallbackError: string;
+  }
+> = {
+  pt: {
+    heading: 'Entrar na sua conta',
+    signupPrompt: 'Ainda não tem conta?',
+    signupAction: 'Criar conta e evento',
+    emailLabel: 'E-mail',
+    passwordLabel: 'Senha',
+    showPassword: 'Mostrar senha',
+    hidePassword: 'Ocultar senha',
+    submit: 'Entrar',
+    fallbackError: 'Falha na autenticação do organizador.',
+  },
+  en: {
+    heading: 'Sign in to your account',
+    signupPrompt: "Don't have an account yet?",
+    signupAction: 'Create account & event',
+    emailLabel: 'Email',
+    passwordLabel: 'Password',
+    showPassword: 'Show password',
+    hidePassword: 'Hide password',
+    submit: 'Sign in',
+    fallbackError: 'Organizer authentication failed.',
+  },
+  it: {
+    heading: 'Accedi al tuo account',
+    signupPrompt: 'Non hai ancora un account?',
+    signupAction: 'Crea account ed evento',
+    emailLabel: 'Email',
+    passwordLabel: 'Password',
+    showPassword: 'Mostra password',
+    hidePassword: 'Nascondi password',
+    submit: 'Accedi',
+    fallbackError: 'Autenticazione organizzatore non riuscita.',
+  },
+};
+
+export const OrganizerLoginModal: React.FC<OrganizerLoginModalProps> = ({
+  currentLang,
+  onLanguageChange,
+  onLoginSuccess,
+}) => {
+  const c = copyByLang[currentLang];
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const inputClass =
+    'dg-control w-full bg-[#0b0d12]/90 border border-[#262a36] rounded-md px-3.5 py-2.5 text-white placeholder:text-zinc-500 transition';
+  const landingPrimaryButtonClass =
+    'underline underline-offset-4 decoration-zinc-700 border-2 border-[#1e222e] hover:border-white/40 rounded-md px-6 py-2 font-markazi text-xl bg-gradient-to-tr from-black to-[#0f1117] text-white transition inline-flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white min-h-[48px]';
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,27 +86,43 @@ export const OrganizerLoginModal: React.FC<OrganizerLoginModalProps> = ({ curren
       const res = await organizerLogin(email, password);
       onLoginSuccess(res.token, res.organizer);
     } catch (err: any) {
-      setError(err?.response?.data?.detail || 'Falha na autenticação do organizador.');
+      setError(err?.response?.data?.detail || c.fallbackError);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-lg">
-      <div className="w-full max-w-md bg-[#0f1117] border border-[#1e222e] rounded-2xl shadow-2xl p-6 space-y-5 animate-fadeIn">
-        
-        <div className="text-center">
-          <img src="/dg-com-br.png" alt="Digital Garage" className="h-10 mx-auto mb-4 object-contain" />
-          <h2 className="text-lg font-black text-white uppercase tracking-wider">Acesso Restrito Organizador</h2>
-          <p className="text-xs text-zinc-400 mt-1">Autenticação obrigatória para acessar o painel de bilheteria e portão.</p>
-        </div>
+    <div className="min-h-[100dvh] bg-[#08090b] text-white flex flex-col font-sans">
+      {onLanguageChange && (
+        <Navbar currentLang={currentLang} onLanguageChange={onLanguageChange} />
+      )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label htmlFor="organizer-email" className="text-xs font-bold text-zinc-300 block mb-1">E-mail do Organizador</label>
-            <div className="relative">
-              <Mail className="w-4 h-4 text-zinc-400 absolute left-3 top-3" aria-hidden="true" />
+      <main className="flex-1 flex items-center justify-center px-6 py-12 bg-[#0a0c10]">
+        <div className="w-full max-w-md space-y-6">
+          <div className="space-y-1.5">
+            <h1 className="text-3xl font-medium font-markazi text-white tracking-wide">
+              {c.heading}
+            </h1>
+            <p className="text-sm text-zinc-400">
+              {c.signupPrompt}{' '}
+              <Link
+                to="/criar-evento"
+                className="font-markazi text-lg text-white underline underline-offset-4 decoration-zinc-600 hover:decoration-white transition"
+              >
+                {c.signupAction}
+              </Link>
+            </p>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-1.5">
+              <label
+                htmlFor="organizer-email"
+                className="block text-xs font-bold text-zinc-200"
+              >
+                {c.emailLabel}
+              </label>
               <input
                 id="organizer-email"
                 name="email"
@@ -55,78 +131,75 @@ export const OrganizerLoginModal: React.FC<OrganizerLoginModalProps> = ({ curren
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="admin@digitalgarage.com.br"
-                className="w-full bg-[#08090b] border border-[#1e222e] rounded-xl pl-9 pr-3 py-2.5 text-xs text-white focus:border-dg-cyan"
+                placeholder="nome@organizacao.com.br"
+                className={inputClass}
               />
             </div>
-          </div>
 
-          <div>
-            <label htmlFor="organizer-password" className="text-xs font-bold text-zinc-300 block mb-1">Senha de Acesso</label>
-            <div className="relative">
-              <Key className="w-4 h-4 text-zinc-400 absolute left-3 top-3" aria-hidden="true" />
-              <input
-                id="organizer-password"
-                name="password"
-                type={showPassword ? 'text' : 'password'}
-                autoComplete="current-password"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
-                className="w-full bg-[#08090b] border border-[#1e222e] rounded-xl pl-9 pr-10 py-2.5 text-xs text-white focus:border-dg-cyan"
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword((prev) => !prev)}
-                aria-pressed={showPassword}
-                aria-label={showPassword ? 'Ocultar senha' : 'Mostrar senha'}
-                className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 min-w-[28px] min-h-[28px] flex items-center justify-center text-zinc-400 hover:text-white rounded-md transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-dg-cyan"
+            <div className="space-y-1.5">
+              <label
+                htmlFor="organizer-password"
+                className="block text-xs font-bold text-zinc-200"
               >
-                {showPassword ? (
-                  <EyeOff className="w-4 h-4" aria-hidden="true" />
+                {c.passwordLabel}
+              </label>
+              <div className="relative">
+                <input
+                  id="organizer-password"
+                  name="password"
+                  type={showPassword ? 'text' : 'password'}
+                  autoComplete="current-password"
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                  className={`${inputClass} pr-12`}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((prev) => !prev)}
+                  aria-pressed={showPassword}
+                  aria-label={showPassword ? c.hidePassword : c.showPassword}
+                  className="absolute right-1.5 top-1/2 -translate-y-1/2 min-w-[40px] min-h-[40px] flex items-center justify-center text-zinc-400 hover:text-white rounded-md transition cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-white"
+                >
+                  {showPassword ? (
+                    <EyeOff className="w-4 h-4" aria-hidden="true" />
+                  ) : (
+                    <Eye className="w-4 h-4" aria-hidden="true" />
+                  )}
+                </button>
+              </div>
+            </div>
+
+            {error && (
+              <div
+                role="alert"
+                className="p-3 rounded-md bg-red-500/10 border border-red-500/30 text-red-300 text-xs flex items-center gap-2"
+              >
+                <AlertCircle className="w-4 h-4 shrink-0" aria-hidden="true" />
+                <span>{error}</span>
+              </div>
+            )}
+
+            <div className="pt-2">
+              <button
+                type="submit"
+                disabled={loading}
+                className={`${landingPrimaryButtonClass} w-full sm:w-auto`}
+              >
+                {loading ? (
+                  <Loader2 className="w-5 h-5 animate-spin" aria-hidden="true" />
                 ) : (
-                  <Eye className="w-4 h-4" aria-hidden="true" />
+                  <>
+                    <span>{c.submit}</span>
+                    <ArrowRight className="w-4 h-4" aria-hidden="true" />
+                  </>
                 )}
               </button>
             </div>
-          </div>
-
-          {error && (
-            <div className="p-3 bg-red-500/10 border border-red-500/30 rounded-xl text-red-400 text-xs flex items-center gap-2">
-              <AlertCircle className="w-4 h-4" />
-              <span>{error}</span>
-            </div>
-          )}
-
-          <div className="bg-[#151720] p-3 rounded-xl border border-[#1e222e] text-[11px] text-zinc-400 font-mono">
-            <strong>Credenciais Seed de Teste:</strong><br />
-            Email: <span className="text-dg-cyan">admin@digitalgarage.com.br</span><br />
-            Senha: <span className="text-white">admin123</span>
-          </div>
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full py-3.5 bg-dg-cyan hover:bg-cyan-400 text-black font-extrabold text-xs uppercase tracking-wider rounded-xl transition flex items-center justify-center gap-2 shadow-lg shadow-cyan-500/20 disabled:opacity-50"
-          >
-            {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : (
-              <>
-                <ShieldCheck className="w-4 h-4" /> Entrar como Organizador
-              </>
-            )}
-          </button>
-
-          <div className="pt-2 border-t border-[#1e222e] text-center">
-            <Link
-              to="/criar-evento"
-              className="font-markazi text-xl underline underline-offset-4 decoration-zinc-700 text-zinc-300 hover:text-white transition"
-            >
-              Ainda não tem conta? Cadastre-se e Crie Seu Evento
-            </Link>
-          </div>
-        </form>
-      </div>
+          </form>
+        </div>
+      </main>
     </div>
   );
 };
