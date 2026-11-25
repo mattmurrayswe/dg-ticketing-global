@@ -71,7 +71,7 @@ export const TicketPassModal: React.FC<TicketPassModalProps> = ({ currentLang, o
       <div className="relative w-full max-w-lg bg-gradient-to-b from-[#0b0c11] to-[#08090b] border border-[#1e222e] rounded-2xl shadow-2xl overflow-hidden animate-fadeIn my-8">
 
         {/* Top Header (Landing & Criar Evento Typography + .dg-parede-queimada gradient) */}
-        <div className="dg-parede-queimada border-b border-[#1e222e] p-6 text-center relative">
+        <div className="dg-parede-queimada border-b border-[#1e222e] px-6 pt-6 pb-4 text-center relative">
           <button
             type="button"
             onClick={onClose}
@@ -81,10 +81,10 @@ export const TicketPassModal: React.FC<TicketPassModalProps> = ({ currentLang, o
             <X className="w-5 h-5" />
           </button>
 
-          <img src="/dg-com-br.png" alt="Digital Garage" className="h-9 mx-auto mb-2.5 object-contain" />
+          <img src="/dg-com-br.png" alt="Digital Garage" className="h-12 mx-auto mb-7 object-contain" />
 
-          <p className="font-markazi text-base text-zinc-400 leading-none mb-2">
-            De GearHead para GearHead
+          <p className="font-markazi text-xl text-zinc-300 leading-none mb-2.5">
+            • Ingresso Oficial
           </p>
 
           <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-[#08090b] border border-[#262a36] text-[11px] font-exo text-zinc-200 font-bold uppercase tracking-wider mb-2">
@@ -92,7 +92,7 @@ export const TicketPassModal: React.FC<TicketPassModalProps> = ({ currentLang, o
             {orderData.payment_status === 'paid' ? 'Ingresso Pago' : 'Ingresso Confirmado'}
           </div>
 
-          <h2 className="!font-markazi text-3xl font-semibold text-white tracking-wide leading-tight">
+          <h2 className="font-righteous text-2xl font-normal text-white tracking-wide leading-tight">
             {orderData.event_title || 'Digital Garage Car Meet'}
           </h2>
           <p className="text-xs text-zinc-400 font-mono tracking-wider mt-1">
@@ -101,14 +101,14 @@ export const TicketPassModal: React.FC<TicketPassModalProps> = ({ currentLang, o
         </div>
 
         {/* Ticket Body */}
-        <div className="p-6 space-y-4">
+        <div className="px-6 pt-7 pb-6 space-y-4">
           {/* Date & Venue */}
           <div className="grid grid-cols-2 gap-3 text-xs">
             <div className="bg-[#151720] p-3 rounded-xl border border-[#1e222e] flex items-start gap-2.5">
               <Calendar className="w-4 h-4 text-zinc-400 mt-0.5 shrink-0" />
               <div>
                 <span className="text-zinc-400 block text-[10px] uppercase font-mono">Data</span>
-                <span className="font-bold text-white">{orderData.event_date || 'A definir'}</span>
+                <span className="font-bold text-zinc-200">{orderData.event_date || 'A definir'}</span>
               </div>
             </div>
 
@@ -116,7 +116,7 @@ export const TicketPassModal: React.FC<TicketPassModalProps> = ({ currentLang, o
               <MapPin className="w-4 h-4 text-zinc-400 mt-0.5 shrink-0" />
               <div>
                 <span className="text-zinc-400 block text-[10px] uppercase font-mono">Local</span>
-                <span className="font-bold text-white">{orderData.event_location || 'Local a confirmar'}</span>
+                <span className="font-bold text-zinc-200">{orderData.event_location || 'Local a confirmar'}</span>
               </div>
             </div>
           </div>
@@ -125,7 +125,7 @@ export const TicketPassModal: React.FC<TicketPassModalProps> = ({ currentLang, o
           <div className="flex items-center justify-between bg-[#151720] p-3.5 rounded-xl border border-[#1e222e]">
             <div>
               <span className="text-[10px] text-zinc-400 uppercase font-mono block">Categoria</span>
-              <span className="text-sm font-bold text-white">{orderData.tier_name || 'Ingresso Oficial'}</span>
+              <span className="text-sm font-bold text-zinc-200">{orderData.tier_name || 'Ingresso Oficial'}</span>
               {orderData.buyer_name && (
                 <span className="text-xs text-zinc-400 block mt-0.5">{orderData.buyer_name}</span>
               )}
@@ -142,16 +142,16 @@ export const TicketPassModal: React.FC<TicketPassModalProps> = ({ currentLang, o
                 <Car className="w-4 h-4 text-zinc-300" />
                 Veículo Expositor Registrado
               </div>
-              <p className="text-base font-bold text-white">
+              <p className="text-base font-bold text-zinc-200">
                 {orderData.car_make} {orderData.car_model} ({orderData.car_year || '2026'})
               </p>
               <div className="flex items-center gap-3 mt-1 text-xs text-zinc-400">
                 <span>
-                  Placa: <strong className="text-white font-mono">{orderData.license_plate || 'N/A'}</strong>
+                  Placa: <strong className="text-zinc-200 font-mono">{orderData.license_plate || 'N/A'}</strong>
                 </span>
                 <span>•</span>
                 <span>
-                  Cor: <strong className="text-white">{orderData.car_color || 'N/A'}</strong>
+                  Cor: <strong className="text-zinc-200">{orderData.car_color || 'N/A'}</strong>
                 </span>
               </div>
             </div>

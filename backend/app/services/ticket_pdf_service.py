@@ -8,6 +8,8 @@ from PIL import Image
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.utils import ImageReader
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfgen import canvas
 
 # Digital Garage Brand Palette (mirrors LandingPage.tsx, CreateEventFlow.tsx & .dg-parede-queimada)
@@ -27,6 +29,24 @@ DG_TEXT_DIM = colors.HexColor("#71717a")
 
 ASSETS_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "assets")
 LOGO_PATH = os.path.join(ASSETS_DIR, "dg-com-br.png")
+RIGHTEOUS_FONT_PATH = os.path.join(ASSETS_DIR, "fonts", "Righteous-Regular.ttf")
+MARKAZI_FONT_PATH = os.path.join(ASSETS_DIR, "fonts", "MarkaziText-Medium.ttf")
+
+EVENT_TITLE_FONT = "Helvetica-Bold"
+if os.path.exists(RIGHTEOUS_FONT_PATH):
+    try:
+        pdfmetrics.registerFont(TTFont("Righteous", RIGHTEOUS_FONT_PATH))
+        EVENT_TITLE_FONT = "Righteous"
+    except Exception:
+        EVENT_TITLE_FONT = "Helvetica-Bold"
+
+EYEBROW_FONT = "Times-Roman"
+if os.path.exists(MARKAZI_FONT_PATH):
+    try:
+        pdfmetrics.registerFont(TTFont("MarkaziText", MARKAZI_FONT_PATH))
+        EYEBROW_FONT = "MarkaziText"
+    except Exception:
+        EYEBROW_FONT = "Times-Roman"
 
 
 def _make_qr_pil(data: str) -> Image.Image:
@@ -159,7 +179,7 @@ def generate_ticket_pdf(order_data: Dict[str, Any]) -> bytes:
     c.restoreState()
 
     # Top header panel inside card (mirrors .dg-parede-queimada / hero gradient: #101219 -> #0b0c11 -> #08090b)
-    header_h = 128
+    header_h = 144
     header_y = card_top - header_h
     c.saveState()
     hdr_path = c.beginPath()
@@ -191,24 +211,24 @@ def generate_ticket_pdf(order_data: Dict[str, Any]) -> bytes:
         try:
             logo = ImageReader(LOGO_PATH)
             iw, ih = logo.getSize()
-            target_h = 30
+            target_h = 40
             target_w = target_h * (iw / ih)
-            c.drawImage(logo, inner_x, card_top - 48, width=target_w, height=target_h, mask="auto")
+            c.drawImage(logo, inner_x, card_top - 56, width=target_w, height=target_h, mask="auto")
         except Exception:
-            c.setFont("Helvetica-Bold", 14)
+            c.setFont("Helvetica-Bold", 16)
             c.setFillColor(DG_TEXT)
-            c.drawString(inner_x, card_top - 38, "DIGITAL GARAGE")
+            c.drawString(inner_x, card_top - 42, "DIGITAL GARAGE")
     else:
-        c.setFont("Helvetica-Bold", 14)
+        c.setFont("Helvetica-Bold", 16)
         c.setFillColor(DG_TEXT)
-        c.drawString(inner_x, card_top - 38, "DIGITAL GARAGE")
+        c.drawString(inner_x, card_top - 42, "DIGITAL GARAGE")
 
     # Status pill (top right — pure monochrome)
     status_label = "INGRESSO PAGO" if payment_status == "paid" else "INGRESSO CONFIRMADO"
     pill_w = 148
     pill_h = 22
     pill_x = card_margin_x + card_w - 28 - pill_w
-    pill_y = card_top - 44
+    pill_y = card_top - 46
     c.setFillColor(DG_DARK)
     c.setStrokeColor(DG_BORDER_STRONG)
     c.setLineWidth(1)
@@ -217,19 +237,19 @@ def generate_ticket_pdf(order_data: Dict[str, Any]) -> bytes:
     c.setFillColor(DG_TEXT_SOFT)
     c.drawCentredString(pill_x + pill_w / 2, pill_y + 7.5, status_label)
 
-    # Eyebrow ("De GearHead para GearHead") + Editorial Serif Event Title
-    c.setFont("Times-Roman", 11)
-    c.setFillColor(DG_TEXT_MUTED)
-    c.drawString(inner_x, card_top - 70, "De GearHead para GearHead  •  Ingresso Oficial")
+    # Eyebrow (• Ingresso Oficial in Markazi Text) + Righteous Event Title
+    c.setFont(EYEBROW_FONT, 16)
+    c.setFillColor(colors.HexColor("#d4d4d8"))
+    c.drawString(inner_x, card_top - 96, "•  Ingresso Oficial")
 
     _draw_wrapped_text(
         c,
         event_title,
         x=inner_x,
-        y=card_top - 93,
+        y=card_top - 122,
         max_width=inner_w,
-        font_name="Times-Bold",
-        font_size=22,
+        font_name=EVENT_TITLE_FONT,
+        font_size=21,
         line_height=24,
         color=DG_TEXT,
         max_lines=2,
@@ -241,10 +261,10 @@ def generate_ticket_pdf(order_data: Dict[str, Any]) -> bytes:
     c.line(card_margin_x, header_y, card_margin_x + card_w, header_y)
 
     # 3. Event Details Grid (Date & Location)
-    cur_y = header_y - 24
+    cur_y = header_y - 34
     col_gap = 14
     col_w = (inner_w - col_gap) / 2
-    box_h = 66
+    box_h = 64
 
     # Date Box
     c.setFillColor(DG_PANEL)
@@ -262,7 +282,7 @@ def generate_ticket_pdf(order_data: Dict[str, Any]) -> bytes:
         font_name="Helvetica-Bold",
         font_size=11,
         line_height=14,
-        color=DG_TEXT,
+        color=DG_TEXT_SOFT,
         max_lines=2,
     )
 
@@ -286,7 +306,7 @@ def generate_ticket_pdf(order_data: Dict[str, Any]) -> bytes:
         font_name="Helvetica-Bold",
         font_size=11,
         line_height=14,
-        color=DG_TEXT,
+        color=DG_TEXT_SOFT,
         max_lines=2,
     )
 
@@ -309,14 +329,14 @@ def generate_ticket_pdf(order_data: Dict[str, Any]) -> bytes:
     c.setFillColor(DG_TEXT_MUTED)
     c.drawString(inner_x + 16, cur_y - 20, "CATEGORIA DO INGRESSO")
     c.setFont("Helvetica-Bold", 14)
-    c.setFillColor(DG_TEXT)
+    c.setFillColor(DG_TEXT_SOFT)
     c.drawString(inner_x + 16, cur_y - 38, tier_name[:38])
 
     c.setFont("Courier-Bold", 8)
     c.setFillColor(DG_TEXT_MUTED)
     c.drawString(inner_x + 16, cur_y - 62, "TITULAR")
     c.setFont("Helvetica-Bold", 12)
-    c.setFillColor(DG_TEXT)
+    c.setFillColor(DG_TEXT_SOFT)
     c.drawString(inner_x + 16, cur_y - 78, buyer_name[:42])
     if buyer_email or buyer_phone:
         contact_line = "  |  ".join(p for p in [buyer_email, buyer_phone] if p)
@@ -330,7 +350,7 @@ def generate_ticket_pdf(order_data: Dict[str, Any]) -> bytes:
     c.setFillColor(DG_TEXT_MUTED)
     c.drawRightString(right_x, cur_y - 20, "CÓDIGO DO PASSE")
     c.setFont("Courier-Bold", 13)
-    c.setFillColor(DG_TEXT)
+    c.setFillColor(DG_TEXT_SOFT)
     c.drawRightString(right_x, cur_y - 38, f"#{order_code}")
 
     if total_amount is not None:
@@ -338,7 +358,7 @@ def generate_ticket_pdf(order_data: Dict[str, Any]) -> bytes:
         c.setFillColor(DG_TEXT_MUTED)
         c.drawRightString(right_x, cur_y - 62, f"PAGAMENTO ({payment_method})")
         c.setFont("Helvetica-Bold", 11)
-        c.setFillColor(DG_TEXT)
+        c.setFillColor(DG_TEXT_SOFT)
         c.drawRightString(right_x, cur_y - 78, _format_currency(total_amount, currency))
 
     cur_y -= info_h + 14
@@ -357,7 +377,7 @@ def generate_ticket_pdf(order_data: Dict[str, Any]) -> bytes:
 
         car_title = f"{car_make} {car_model or ''} ({car_year or '2026'})".strip()
         c.setFont("Helvetica-Bold", 13)
-        c.setFillColor(DG_TEXT)
+        c.setFillColor(DG_TEXT_SOFT)
         c.drawString(inner_x + 16, cur_y - 37, car_title[:48])
 
         c.setFont("Helvetica", 9.5)
@@ -370,7 +390,7 @@ def generate_ticket_pdf(order_data: Dict[str, Any]) -> bytes:
         cur_y -= car_h + 16
 
     # 6. Perforated Boarding-Pass Divider with semicircular cutouts
-    perf_y = card_bottom + 230
+    perf_y = card_bottom + 224
     c.saveState()
     c.setStrokeColor(DG_BORDER)
     c.setLineWidth(1.2)
@@ -390,12 +410,13 @@ def generate_ticket_pdf(order_data: Dict[str, Any]) -> bytes:
     c.rect(card_margin_x + card_w, perf_y - 13, 13, 26, stroke=0, fill=1)
 
     # 7. QR Code Check-in Zone (Bottom of ticket)
-    qr_size = 122
-    qr_box_x = page_w / 2 - (qr_size + 16) / 2
-    qr_box_y = perf_y - 20 - (qr_size + 16)
+    qr_size = 118
+    qr_box_w = qr_size + 16
+    qr_box_x = page_w / 2 - qr_box_w / 2
+    qr_box_y = perf_y - 18 - qr_box_w
 
     c.setFillColor(DG_TEXT)
-    c.roundRect(qr_box_x, qr_box_y, qr_size + 16, qr_size + 16, 12, stroke=0, fill=1)
+    c.roundRect(qr_box_x, qr_box_y, qr_box_w, qr_box_w, 12, stroke=0, fill=1)
 
     qr_img = _make_qr_pil(order_code)
     qr_buf = io.BytesIO()
