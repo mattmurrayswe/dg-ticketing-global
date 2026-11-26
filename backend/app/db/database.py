@@ -39,4 +39,8 @@ def init_db():
         _ensure_column(conn, "organizers", "organization", "VARCHAR(150)")
         _ensure_column(conn, "organizers", "instagram", "VARCHAR(120)")
         _ensure_column(conn, "events", "organizer_id", "INTEGER")
+        _ensure_column(conn, "events", "country", "VARCHAR(60)")
+        _ensure_column(conn, "ticket_orders", "payment_provider", "VARCHAR(40)")
+        _ensure_column(conn, "ticket_orders", "infinitepay_slug", "VARCHAR(255)")
+        _ensure_column(conn, "ticket_orders", "checkout_url", "TEXT")
     print("Database tables initialized successfully.")

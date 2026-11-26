@@ -7,6 +7,7 @@ import { GateScanner } from '../components/GateScanner';
 import { CortesiaModal } from '../components/CortesiaModal';
 import { OrganizerLoginModal } from '../components/OrganizerLoginModal';
 import { EventConfigModal } from '../components/EventConfigModal';
+import { FindExhibitorVehiclesTab } from '../components/FindExhibitorVehiclesTab';
 import {
   DollarSign,
   Ticket,
@@ -69,7 +70,7 @@ export const OrganizerDashboardV2: React.FC<OrganizerDashboardV2Props> = ({
   // Modals & Tabs
   const [showCortesiaModal, setShowCortesiaModal] = useState(false);
   const [showEventConfigModal, setShowEventConfigModal] = useState(false);
-  const [activeTab, setActiveTab] = useState<'scanner' | 'roster'>('scanner');
+  const [activeTab, setActiveTab] = useState<'exhibitors' | 'scanner' | 'roster'>('exhibitors');
 
   const loadData = async () => {
     if (!token) return;
@@ -340,16 +341,42 @@ export const OrganizerDashboardV2: React.FC<OrganizerDashboardV2Props> = ({
                 </div>
               </section>
 
-              {/* Operations: Gate Scanner & Roster */}
+              {/* Operations: Exhibitor Vehicles, Gate Scanner & Roster */}
               <section className="space-y-6">
                 <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[#1e222e] pb-3">
-                  <div className="flex items-center gap-2">
+                  <div
+                    role="tablist"
+                    aria-label="Operações do Organizador"
+                    {...({ focusgroup: 'tablist nomemory' } as any)}
+                    className="dg-tablist items-center gap-2 max-w-full"
+                  >
                     <button
+                      id="orgv2-tab-exhibitors"
                       type="button"
+                      role="tab"
+                      aria-selected={activeTab === 'exhibitors'}
+                      {...(activeTab === 'exhibitors' ? ({ focusgroupstart: '' } as any) : {})}
+                      onClick={() => setActiveTab('exhibitors')}
+                      className={`dg-tab px-4 py-2 rounded-lg text-xs font-bold transition-colors flex items-center gap-2 ${
+                        activeTab === 'exhibitors'
+                          ? 'bg-white text-black'
+                          : 'text-zinc-400 hover:text-white'
+                      }`}
+                    >
+                      <Car className="w-4 h-4" aria-hidden="true" />
+                      <span>{t.findExhibitorVehiclesTab}</span>
+                    </button>
+
+                    <button
+                      id="orgv2-tab-scanner"
+                      type="button"
+                      role="tab"
+                      aria-selected={activeTab === 'scanner'}
+                      {...(activeTab === 'scanner' ? ({ focusgroupstart: '' } as any) : {})}
                       onClick={() => setActiveTab('scanner')}
-                      className={`px-4 py-2 rounded-lg text-xs font-bold transition flex items-center gap-2 ${
+                      className={`dg-tab px-4 py-2 rounded-lg text-xs font-bold transition-colors flex items-center gap-2 ${
                         activeTab === 'scanner'
-                          ? 'bg-white text-black font-extrabold'
+                          ? 'bg-white text-black'
                           : 'text-zinc-400 hover:text-white'
                       }`}
                     >
@@ -358,11 +385,15 @@ export const OrganizerDashboardV2: React.FC<OrganizerDashboardV2Props> = ({
                     </button>
 
                     <button
+                      id="orgv2-tab-roster"
                       type="button"
+                      role="tab"
+                      aria-selected={activeTab === 'roster'}
+                      {...(activeTab === 'roster' ? ({ focusgroupstart: '' } as any) : {})}
                       onClick={() => setActiveTab('roster')}
-                      className={`px-4 py-2 rounded-lg text-xs font-bold transition flex items-center gap-2 ${
+                      className={`dg-tab px-4 py-2 rounded-lg text-xs font-bold transition-colors flex items-center gap-2 ${
                         activeTab === 'roster'
-                          ? 'bg-white text-black font-extrabold'
+                          ? 'bg-white text-black'
                           : 'text-zinc-400 hover:text-white'
                       }`}
                     >
@@ -379,8 +410,15 @@ export const OrganizerDashboardV2: React.FC<OrganizerDashboardV2Props> = ({
                   </Link>
                 </div>
 
+                {activeTab === 'exhibitors' && (
+                  <div role="tabpanel" aria-labelledby="orgv2-tab-exhibitors">
+                    <FindExhibitorVehiclesTab onInviteSent={loadData} />
+                  </div>
+                )}
+
                 {activeTab === 'scanner' && (
-                  <div className="rounded-2xl bg-[#0f1117] border border-[#1e222e] overflow-hidden grid grid-cols-1 lg:grid-cols-12 items-stretch">
+                  <div role="tabpanel" aria-labelledby="orgv2-tab-scanner">
+                    <div className="rounded-2xl bg-[#0f1117] border border-[#1e222e] overflow-hidden grid grid-cols-1 lg:grid-cols-12 items-stretch">
                     <div className="lg:col-span-7 p-6 sm:p-8 flex flex-col justify-center">
                       <GateScanner currentLang={currentLang} />
                     </div>
@@ -392,9 +430,11 @@ export const OrganizerDashboardV2: React.FC<OrganizerDashboardV2Props> = ({
                       />
                     </div>
                   </div>
+                  </div>
                 )}
 
                 {activeTab === 'roster' && (
+                  <div role="tabpanel" aria-labelledby="orgv2-tab-roster">
                   <div className="bg-[#0f1117] p-6 rounded-2xl border border-[#1e222e] space-y-4">
                     <div className="flex flex-wrap items-center justify-between gap-3">
                       <h2 className="text-lg text-white">
@@ -483,6 +523,7 @@ export const OrganizerDashboardV2: React.FC<OrganizerDashboardV2Props> = ({
                         </tbody>
                       </table>
                     </div>
+                  </div>
                   </div>
                 )}
               </section>

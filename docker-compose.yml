@@ -11,7 +11,12 @@ services:
       - DATABASE_URL=postgresql+psycopg2://dgticketing:dgticketing123@db:5432/dgticketing
       - REDIS_URL=redis://redis:6379/0
       - FRONTEND_URL=http://localhost:5175
+      - CLASSIFICADOS_API_URL=http://host.docker.internal:8002/api
+      - CLASSIFICADOS_PUBLIC_URL=http://localhost:8002
+      - CLASSIFICADOS_WEB_URL=http://localhost:3002
       - PYTHONUNBUFFERED=1
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     volumes:
       - ./backend:/app
     depends_on:

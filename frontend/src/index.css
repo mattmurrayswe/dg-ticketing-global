@@ -101,3 +101,193 @@ h2, h3, h4, h5, h6, .font-heading, .font-righteous {
   background-color: #0b0c11;
   background-image: linear-gradient(to left, #101219 0%, #0b0c11 55%, #08090b 100%);
 }
+
+/* Monochrome post-interaction validation overrides for Checkout */
+.dg-checkout-mono .dg-control:is(:user-invalid, .user-invalid-fallback) {
+  border-color: rgba(255, 255, 255, 0.75) !important;
+  background-color: rgba(255, 255, 255, 0.04) !important;
+}
+
+.dg-checkout-mono .dg-control:is(:user-valid, .user-valid-fallback) {
+  border-color: rgba(255, 255, 255, 0.28);
+}
+
+/* Accessible single-row horizontal tablist & non-color indicator */
+.dg-tablist {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  scroll-snap-type: inline proximity;
+  scrollbar-width: none;
+}
+
+.dg-tablist::-webkit-scrollbar {
+  display: none;
+}
+
+.dg-tab {
+  position: relative;
+  flex: none;
+  scroll-snap-align: start;
+}
+
+.dg-tab[aria-selected="true"]::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0;
+  border-block-end: 2px solid currentColor;
+}
+
+/* Native <dialog> scroll containment without mutating html/body overflow */
+dialog:modal {
+  overscroll-behavior: contain;
+}
+
+dialog::backdrop {
+  overflow: hidden;
+  overscroll-behavior: contain;
+  background: rgba(5, 6, 8, 0.82);
+  backdrop-filter: blur(8px);
+}
+
+/* Branded Digital Garage Select (Customizable <select> + dark fallback) */
+.dg-select {
+  color-scheme: dark;
+  width: 100%;
+  min-height: 42px;
+  background-color: #0b0d12;
+  background-image: linear-gradient(to top right, #08090b, #12151e);
+  color: #f4f4f5;
+  border: 1px solid #262a36;
+  border-radius: 0.5rem;
+  padding: 0.625rem 0.875rem;
+  font-family: 'Figtree', system-ui, -apple-system, sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1.25rem;
+  cursor: pointer;
+  transition: border-color 150ms ease, background-color 150ms ease;
+}
+
+.dg-select:hover {
+  border-color: rgba(255, 255, 255, 0.32);
+}
+
+.dg-select:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.65);
+  outline-offset: 2px;
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+@supports (appearance: base-select) {
+  .dg-select,
+  .dg-select::picker(select) {
+    appearance: base-select;
+  }
+
+  .dg-select {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+
+  .dg-select::picker-icon {
+    color: #a1a1aa;
+    transition: transform 150ms ease, color 150ms ease;
+  }
+
+  .dg-select:hover::picker-icon {
+    color: #ffffff;
+  }
+
+  .dg-select:open::picker-icon {
+    transform: rotate(180deg);
+    color: #ffffff;
+  }
+
+  .dg-select::picker(select) {
+    margin-block-start: 0.375rem;
+    background-color: #0f1117;
+    color: #f4f4f5;
+    border: 1px solid #262a36;
+    border-radius: 0.625rem;
+    padding: 0.35rem;
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.75);
+    font-family: 'Figtree', system-ui, -apple-system, sans-serif;
+    font-size: 0.75rem;
+  }
+
+  .dg-select option {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.55rem 0.7rem;
+    border-radius: 0.375rem;
+    color: #d4d4d8;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .dg-select option:hover,
+  .dg-select option:focus-visible {
+    background-color: #181b24;
+    color: #ffffff;
+    outline: none;
+  }
+
+  .dg-select option:checked {
+    background-color: #151720;
+    color: #ffffff;
+  }
+
+  .dg-select option::checkmark {
+    color: #ffffff;
+    font-weight: 700;
+  }
+}
+
+@supports not (appearance: base-select) {
+  .dg-select {
+    appearance: none;
+    padding-right: 2.25rem;
+    background-image:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23a1a1aa' stroke-width='2.25' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E"),
+      linear-gradient(to top right, #08090b, #12151e);
+    background-repeat: no-repeat, no-repeat;
+    background-position: right 0.75rem center, center;
+    background-size: 14px 14px, 100% 100%;
+  }
+
+  .dg-select option {
+    background-color: #0f1117;
+    color: #f4f4f5;
+  }
+}
+
+/* Sober aligned vehicle cards using CSS subgrid across media, header, meta, and footer */
+.dg-vehicle-grid {
+  display: grid;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+  gap: 1.25rem;
+}
+
+@media (min-width: 768px) {
+  .dg-vehicle-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .dg-vehicle-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.dg-vehicle-card {
+  container-type: inline-size;
+  display: grid;
+  grid-row: span 4;
+  grid-template-rows: subgrid;
+  row-gap: 0;
+}

@@ -8,6 +8,7 @@ import { GateScanner } from '../components/GateScanner';
 import { CortesiaModal } from '../components/CortesiaModal';
 import { OrganizerLoginModal } from '../components/OrganizerLoginModal';
 import { EventConfigModal } from '../components/EventConfigModal';
+import { FindExhibitorVehiclesTab } from '../components/FindExhibitorVehiclesTab';
 
 interface OrganizerDashboardProps {
   currentLang: Language;
@@ -49,7 +50,7 @@ export const OrganizerDashboard: React.FC<OrganizerDashboardProps> = ({ currentL
   // Modals
   const [showCortesiaModal, setShowCortesiaModal] = useState(false);
   const [showEventConfigModal, setShowEventConfigModal] = useState(false);
-  const [activeTab, setActiveTab] = useState<'scanner' | 'roster'>('roster');
+  const [activeTab, setActiveTab] = useState<'roster' | 'exhibitors' | 'scanner'>('roster');
   const [copiedSlug, setCopiedSlug] = useState<string | null>(null);
   const [downloadingOrderCode, setDownloadingOrderCode] = useState<string | null>(null);
 
@@ -284,26 +285,55 @@ export const OrganizerDashboard: React.FC<OrganizerDashboardProps> = ({ currentL
           )}
 
           {/* Tab Navigation */}
-          <div className="flex items-center gap-2 mt-8 mb-6 border-b border-[#1e222e] pb-3">
+          <div
+            role="tablist"
+            aria-label="Ferramentas da Área do Organizador"
+            {...({ focusgroup: 'tablist nomemory' } as any)}
+            className="dg-tablist items-center gap-2 mt-8 mb-6 border-b border-[#1e222e] pb-3"
+          >
             <button
+              id="org-tab-roster"
               type="button"
+              role="tab"
+              aria-selected={activeTab === 'roster'}
+              {...(activeTab === 'roster' ? ({ focusgroupstart: '' } as any) : {})}
               onClick={() => setActiveTab('roster')}
-              className={`px-3 py-2 rounded-lg text-xs font-bold transition-all ${
+              className={`dg-tab px-3 py-2 rounded-lg text-xs font-bold transition-colors border ${
                 activeTab === 'roster'
-                  ? 'bg-[#15171e] text-white border border-white/30'
-                  : 'text-zinc-400 hover:text-white border border-transparent'
+                  ? 'bg-[#15171e] text-white border-white/30'
+                  : 'text-zinc-400 hover:text-white border-transparent'
               }`}
             >
               Lista de Ingressos & Veículos
             </button>
 
             <button
+              id="org-tab-exhibitors"
               type="button"
+              role="tab"
+              aria-selected={activeTab === 'exhibitors'}
+              {...(activeTab === 'exhibitors' ? ({ focusgroupstart: '' } as any) : {})}
+              onClick={() => setActiveTab('exhibitors')}
+              className={`dg-tab px-3 py-2 rounded-lg text-xs font-bold transition-colors border ${
+                activeTab === 'exhibitors'
+                  ? 'bg-[#15171e] text-white border-white/30'
+                  : 'text-zinc-400 hover:text-white border-transparent'
+              }`}
+            >
+              {t.findExhibitorVehiclesTab}
+            </button>
+
+            <button
+              id="org-tab-scanner"
+              type="button"
+              role="tab"
+              aria-selected={activeTab === 'scanner'}
+              {...(activeTab === 'scanner' ? ({ focusgroupstart: '' } as any) : {})}
               onClick={() => setActiveTab('scanner')}
-              className={`px-3 py-2 rounded-lg text-xs font-bold transition-all ${
+              className={`dg-tab px-3 py-2 rounded-lg text-xs font-bold transition-colors border ${
                 activeTab === 'scanner'
-                  ? 'bg-[#15171e] text-white border border-white/30'
-                  : 'text-zinc-400 hover:text-white border border-transparent'
+                  ? 'bg-[#15171e] text-white border-white/30'
+                  : 'text-zinc-400 hover:text-white border-transparent'
               }`}
             >
               Leitor de Portão (Check-in)
@@ -311,14 +341,23 @@ export const OrganizerDashboard: React.FC<OrganizerDashboardProps> = ({ currentL
           </div>
 
           {/* Active Tab View */}
+          {activeTab === 'exhibitors' && (
+            <div role="tabpanel" aria-labelledby="org-tab-exhibitors">
+              <FindExhibitorVehiclesTab onInviteSent={loadData} />
+            </div>
+          )}
+
           {activeTab === 'scanner' && (
-            <div className="max-w-2xl mx-auto">
-              <GateScanner currentLang={currentLang} />
+            <div role="tabpanel" aria-labelledby="org-tab-scanner">
+              <div className="max-w-2xl mx-auto">
+                <GateScanner currentLang={currentLang} />
+              </div>
             </div>
           )}
 
           {activeTab === 'roster' && (
-            <div className="bg-[#0f1117] p-6 rounded-xl border border-[#1e222e] space-y-4">
+            <div role="tabpanel" aria-labelledby="org-tab-roster">
+              <div className="bg-[#0f1117] p-6 rounded-xl border border-[#1e222e] space-y-4">
               <div className="flex items-center justify-between">
                 <h3 className="text-sm font-black text-white uppercase tracking-wider">Compradores Recentes</h3>
                 <button
@@ -384,6 +423,7 @@ export const OrganizerDashboard: React.FC<OrganizerDashboardProps> = ({ currentL
                     ))}
                   </tbody>
                 </table>
+              </div>
               </div>
             </div>
           )}

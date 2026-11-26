@@ -30,6 +30,7 @@ class Event(Base):
     location = Column(String(200), nullable=False)
     address = Column(String(300), nullable=True)
     city = Column(String(100), nullable=False)
+    country = Column(String(60), default="BR")
     banner_url = Column(String(500), nullable=True)
     description = Column(Text, nullable=True)
     status = Column(String(50), default="active")  # active, ended, upcoming
@@ -76,7 +77,7 @@ class TicketOrder(Base):
     order_code = Column(String(50), unique=True, index=True, nullable=False)
     event_id = Column(Integer, ForeignKey("events.id"), nullable=False)
     ticket_tier_id = Column(Integer, ForeignKey("ticket_tiers.id"), nullable=False)
-    
+
     buyer_name = Column(String(150), nullable=False)
     buyer_email = Column(String(150), nullable=False)
     buyer_phone = Column(String(50), nullable=False)
@@ -96,12 +97,15 @@ class TicketOrder(Base):
     currency = Column(String(10), default="BRL")
     applied_coupon = Column(String(50), nullable=True)
 
-    payment_method = Column(String(20), default="pix")  # pix or credit_card
+    payment_method = Column(String(30), default="pix")  # pix or credit_card
+    payment_provider = Column(String(40), nullable=True)  # infinitepay or stripe
     payment_status = Column(String(30), default="pending")  # pending, paid, cancelled, refunded
-    
+
     pix_qr_code = Column(Text, nullable=True)
     pix_copy_paste = Column(Text, nullable=True)
     stripe_session_id = Column(String(255), nullable=True)
+    infinitepay_slug = Column(String(255), nullable=True)
+    checkout_url = Column(Text, nullable=True)
 
     checked_in = Column(Boolean, default=False)
     checked_in_at = Column(DateTime, nullable=True)
@@ -109,3 +113,28 @@ class TicketOrder(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
 
     tier = relationship("TicketTier", back_populates="orders")
+
+
+class ExhibitorInvite(Base):
+    __tablename__ = "exhibitor_invites"
+
+    id = Column(Integer, primary_key=True, index=True)
+    organizer_id = Column(Integer, ForeignKey("organizers.id"), nullable=False)
+    event_id = Column(Integer, ForeignKey("events.id"), nullable=False, index=True)
+    classificados_listing_id = Column(Integer, nullable=False, index=True)
+    order_code = Column(String(50), unique=True, index=True, nullable=False)
+
+    vehicle_title = Column(String(250), nullable=False)
+    car_make = Column(String(100), nullable=True)
+    car_model = Column(String(100), nullable=True)
+    car_year = Column(String(20), nullable=True)
+    car_color = Column(String(50), nullable=True)
+    vehicle_city = Column(String(150), nullable=True)
+    cover_url = Column(String(500), nullable=True)
+
+    owner_name = Column(String(150), nullable=False)
+    owner_email = Column(String(150), nullable=True)
+    owner_phone = Column(String(50), nullable=True)
+    personal_message = Column(Text, nullable=True)
+    status = Column(String(30), default="invited")
+    created_at = Column(DateTime, default=datetime.utcnow)

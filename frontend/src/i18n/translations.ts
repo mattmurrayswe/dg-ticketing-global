@@ -69,6 +69,7 @@ export const translations = {
     checkoutLinkCopied: "Link de Vendas Copiado!",
     shareWhatsapp: "Enviar no WhatsApp",
     findCarMeets: "Encontrar Encontros",
+    findExhibitorVehiclesTab: "Encontre Veículo Expositores",
   },
   en: {
     navBrand: "DIGITAL GARAGE",
@@ -138,6 +139,7 @@ export const translations = {
     checkoutLinkCopied: "Sales Link Copied!",
     shareWhatsapp: "Share on WhatsApp",
     findCarMeets: "Find Car Meets",
+    findExhibitorVehiclesTab: "Encontre Veículo Expositores",
   },
   it: {
     navBrand: "DIGITAL GARAGE",
@@ -207,5 +209,6 @@ export const translations = {
     checkoutLinkCopied: "Link Vendite Copiato!",
     shareWhatsapp: "Condividi su WhatsApp",
     findCarMeets: "Trova Car Meet",
+    findExhibitorVehiclesTab: "Encontre Veículo Expositores",
   }
 };
